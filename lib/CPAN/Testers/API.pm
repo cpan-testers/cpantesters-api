@@ -25,6 +25,7 @@ L<http://www.cpantesters.org>
 use Mojo::Base 'Mojolicious';
 use CPAN::Testers::API::Base;
 use File::Share qw( dist_file );
+use Log::Any::Adapter;
 
 =method schema
 
@@ -52,6 +53,7 @@ sub startup ( $app ) {
         url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
     } );
     $app->helper( schema => \&schema );
+    Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }
 
 1;

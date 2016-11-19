@@ -1,12 +1,15 @@
 
-use CPAN::Testers::API::Base 'Test';
-use CPAN::Testers::API;
+=head1 DESCRIPTION
 
-my $schema = prepare_temp_schema;
-my $app = CPAN::Testers::API->new(
-    schema => $schema,
-);
-my $t = Test::Mojo->new( $app );
+This file tests the L<CPAN::Testers::API> module, application startup,
+plugins, and helpers.
+
+Individual controllers have their own tests.
+
+=cut
+
+use CPAN::Testers::API::Base 'Test';
+my $t = prepare_test_app();
 
 subtest 'can get OpenAPI document' => sub {
     $t->get_ok( '/v1' )

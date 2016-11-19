@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# PODNAME: cpantesters-api
 
 =head1 NAME
 

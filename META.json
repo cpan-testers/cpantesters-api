@@ -1,0 +1,89 @@
+{
+   "abstract" : "REST API for CPAN Testers data",
+   "author" : [
+      "Doug Bell <preaction@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 6.008, CPAN::Meta::Converter version 2.150010",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : 2
+   },
+   "name" : "CPAN-Testers-API",
+   "no_index" : {
+      "directory" : [
+         "eg",
+         "examples",
+         "inc",
+         "share",
+         "t",
+         "xt"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0",
+            "File::ShareDir::Install" : "0.06"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "CPAN::Testers::Schema" : "0.002",
+            "File::Share" : "0",
+            "Import::Base" : "0.012",
+            "Log::Any" : "1.045",
+            "Log::Any::Adapter::MojoLog" : "0.02",
+            "Mojolicious" : "6",
+            "Mojolicious::Plugin::OpenAPI" : "0",
+            "perl" : "5.024"
+         }
+      },
+      "test" : {
+         "recommends" : {
+            "CPAN::Meta" : "2.120900"
+         },
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0",
+            "File::Spec" : "0",
+            "IO::Handle" : "0",
+            "IPC::Open3" : "0",
+            "Test::More" : "1.001005"
+         }
+      }
+   },
+   "provides" : {
+      "CPAN::Testers::API" : {
+         "file" : "lib/CPAN/Testers/API.pm",
+         "version" : "0.001"
+      },
+      "CPAN::Testers::API::Base" : {
+         "file" : "lib/CPAN/Testers/API/Base.pm",
+         "version" : "0.001"
+      },
+      "CPAN::Testers::API::Controller::Release" : {
+         "file" : "lib/CPAN/Testers/API/Controller/Release.pm",
+         "version" : "0.001"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/cpan-testers/cpantesters-api/issues"
+      },
+      "homepage" : "http://api.cpantesters.org",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/cpan-testers/cpantesters-api.git",
+         "web" : "https://github.com/cpan-testers/cpantesters-api"
+      },
+      "x_IRC" : "irc://irc.perl.org/#cpantesters-discuss"
+   },
+   "version" : "0.001",
+   "x_authority" : "cpan:PREACTION",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 3.0216"
+}
+

@@ -38,7 +38,7 @@ use base 'Import::Base';
 
 our @IMPORT_MODULES = (
     'strict', 'warnings',
-    feature => [qw( signatures )],
+    feature => [qw( :5.24 signatures )],
     '-warnings' => [qw( experimental::signatures )],
 );
 

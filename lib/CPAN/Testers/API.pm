@@ -51,8 +51,9 @@ and registers helpers.
 sub startup ( $app ) {
     $app->plugin( OpenAPI => {
         url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
+        allow_invalid_ref => 1,
     } );
-    $app->helper( schema => \&schema );
+    $app->helper( schema => sub { shift->app->schema } );
     Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }
 

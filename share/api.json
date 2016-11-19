@@ -2,6 +2,133 @@
     "swagger": "2.0",
     "info": { "version": "1.0", "title": "CPAN Testers API" },
     "basePath": "/v1",
+
     "paths": {
+        "/release": {
+            "get": {
+                "description": "Get summary test report information about CPAN releases",
+                "x-mojo-to": {
+                    "controller": "Release",
+                    "action": "release"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "The request or parameters are incorrect"
+                    },
+                    "200": {
+                        "description": "A list of release objects",
+                        "schema": {
+                            "type": "array",
+                            "items": { "$ref": "#/definitions/Release" }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/release/dist/{dist}": {
+            "get": {
+                "description": "Get summary test report information about CPAN releases for a particular distribution",
+                "x-mojo-to": {
+                    "controller": "Release",
+                    "action": "release"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" },
+                    {
+                        "name": "dist",
+                        "in": "path",
+                        "description": "The CPAN distribution name (like 'CPAN-Testers-Schema')",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": { "$ref": "#/paths/~1release/get/responses/200" },
+                    "400": { "$ref": "#/paths/~1release/get/responses/400" },
+                    "404": {
+                        "description": "The distribution was not found"
+                    }
+                }
+            }
+        },
+
+        "/release/author/{author}": {
+            "get": {
+                "description": "Get summary test report information about CPAN releases for a particular author",
+                "x-mojo-to": {
+                    "controller": "Release",
+                    "action": "release"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" },
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "The CPAN author name (like 'PREACTION')",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": { "$ref": "#/paths/~1release/get/responses/200" },
+                    "400": { "$ref": "#/paths/~1release/get/responses/400" },
+                    "404": {
+                        "description": "The distribution was not found"
+                    }
+                }
+            }
+        }
+    },
+
+    "parameters": {
+        "since": {
+            "name": "since",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "description": "Only send records that have been updated since the given date/time"
+        }
+    },
+
+    "definitions": {
+        "Release": {
+            "type": "object",
+            "description": "A summary of test reports for a single CPAN release",
+            "properties": {
+                "dist": {
+                    "type": "string",
+                    "description": "The distribution name"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The distribution release version"
+                },
+                "author": {
+                    "type": "string",
+                    "description": "The CPAN ID of the author who released this version of this distribution"
+                },
+                "pass": {
+                    "type": "integer",
+                    "description": "The number of test passes for this release"
+                },
+                "fail": {
+                    "type": "integer",
+                    "description": "The number of test failures for this release"
+                },
+                "na": {
+                    "type": "integer",
+                    "description": "The number of NA results for this release, which means the release does not apply to the tester's machine due to OS, Perl version, or other conditions"
+                },
+                "unknown": {
+                    "type": "integer",
+                    "description": "The number of unknown reports for this release"
+                }
+            }
+        }
+
     }
 }

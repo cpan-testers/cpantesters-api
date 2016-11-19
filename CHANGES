@@ -1,3 +1,6 @@
 Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
+
+    - Initial release. This module is a JSON API for CPAN Testers data
+      using Mojolicious and CPAN::Testers::Schema.

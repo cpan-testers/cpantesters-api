@@ -74,7 +74,21 @@ sub release( $c ) {
         }
     );
 
-    if ( my $since = $c->validation->param( 'since' ) ) {
+    # Only allow "since" for "dist" and "author" because the query can
+    # not be optimized to return in a reasonable time.
+    if ( my $since = $c->param( 'since' ) ) {
+        unless ( $c->validation->param( 'dist' ) || $c->validation->param( 'author' ) ) {
+            return $c->render(
+                status => 400,
+                openapi => {
+                    errors => [
+                        {
+                            message => '"since" parameter not allowed',
+                        },
+                    ],
+                },
+            );
+        }
         $rs = $rs->since( $since );
     }
 

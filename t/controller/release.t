@@ -213,10 +213,11 @@ subtest 'all releases' => sub {
       ->status_is( 200 )
       ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..2] ] );
 
-    subtest 'since' => sub {
+    subtest 'since (disabled until optimized)' => sub {
         $t->get_ok( '/v1/release?since=2016-08-20T00:00:00Z' )
-          ->status_is( 200 )
-          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[1,2] ] );
+          ->status_is( 400 )
+          ->json_has( '/errors' )
+          ->or( sub { diag explain shift->tx->res->json } );
     };
 };
 
@@ -263,7 +264,7 @@ subtest 'by dist' => sub {
 subtest 'input validation' => sub {
 
     subtest '"since" must be an ISO8601 date/time' => sub {
-        $t->get_ok( '/v1/release?since=Sat Nov 19 14:18:40 2016' )
+        $t->get_ok( '/v1/release/dist/My-Dist?since=Sat Nov 19 14:18:40 2016' )
           ->status_is( 400 )
           ->json_has( '/errors' )
           ->or( sub { diag explain shift->tx->res->json } );

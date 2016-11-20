@@ -11,9 +11,6 @@
                     "controller": "Release",
                     "action": "release"
                 },
-                "parameters": [
-                    { "$ref": "#/parameters/since" }
-                ],
                 "responses": {
                     "400": {
                         "description": "The request or parameters are incorrect"

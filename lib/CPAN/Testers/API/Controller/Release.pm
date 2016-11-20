@@ -41,7 +41,6 @@ use CPAN::Testers::API::Base;
         {
             "dist": "My-Dist",
             "version": "1.000",
-            "author": "PREACTION",
             "pass": 34,
             "fail": 2,
             "na": 1,
@@ -53,16 +52,27 @@ Get release data. Results can be limited by distribution (with the
 C<dist> key in the stash), by author (with the C<author> key in the
 stash), and by date (with the C<since> query parameter).
 
+Release data contains a summary of the pass, fail, na, and unknown test
+results created by stable Perls. Development Perls (odd-numbered 5.XX
+releases) are not included.
+
 =cut
 
 sub release( $c ) {
     $c->openapi->valid_input or return;
 
     my $rs = $c->schema->resultset( 'Release' );
-    # Only get hashrefs out
-    $rs = $rs->search( {}, {
-        result_class => 'DBIx::Class::ResultClass::HashRefInflator',
-    } );
+    $rs = $rs->search(
+        {
+            perlmat => 1, # only stable perls
+            patched => 1, # not patched perls
+        },
+        {
+            columns => [qw( dist version pass fail na unknown )],
+            # Only get hashrefs out
+            result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+        }
+    );
 
     if ( my $since = $c->validation->param( 'since' ) ) {
         $rs = $rs->since( $since );

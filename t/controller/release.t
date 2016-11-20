@@ -9,6 +9,10 @@ use CPAN::Testers::API::Base 'Test';
 
 my $t = prepare_test_app();
 
+my @API_FIELDS = qw(
+    dist version pass fail na unknown
+);
+
 my %release_default = (
     oncpan => 1,
     distmat => 1,
@@ -158,6 +162,40 @@ my %data = (
             na => 0,
             unknown => 0,
         },
+
+        {   # Reports from development perls (odd releases) should not be shown
+            %release_default,
+            perlmat => 2, # unstable perl
+            # Upload info
+            dist => 'My-Dist',
+            version => '1.000',
+            uploadid => 3,
+            # Stats
+            id => 4,
+            guid => '00000000-0000-0000-0000-000000000004',
+            # Release summary
+            pass => 0,
+            fail => 0,
+            na => 1,
+            unknown => 0,
+        },
+
+        {   # Reports from patched perl should not be shown
+            %release_default,
+            patched => 2, # patched perl
+            # Upload info
+            dist => 'My-Dist',
+            version => '1.000',
+            uploadid => 3,
+            # Stats
+            id => 4,
+            guid => '00000000-0000-0000-0000-000000000004',
+            # Release summary
+            pass => 0,
+            fail => 1,
+            na => 0,
+            unknown => 0,
+        },
     ],
 );
 
@@ -173,24 +211,24 @@ subtest 'sanity check that items were inserted' => sub {
 subtest 'all releases' => sub {
     $t->get_ok( '/v1/release' )
       ->status_is( 200 )
-      ->json_is( $data{Release} );
+      ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..2] ] );
 
     subtest 'since' => sub {
         $t->get_ok( '/v1/release?since=2016-08-20T00:00:00Z' )
           ->status_is( 200 )
-          ->json_is( [ $data{Release}->@[1,2] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[1,2] ] );
     };
 };
 
 subtest 'by dist' => sub {
     $t->get_ok( '/v1/release/dist/My-Dist' )
       ->status_is( 200 )
-      ->json_is( [ $data{Release}->@[0,1] ] );
+      ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,1] ] );
 
     subtest 'since' => sub {
         $t->get_ok( '/v1/release/dist/My-Dist?since=2016-08-20T00:00:00Z' )
           ->status_is( 200 )
-          ->json_is( [ $data{Release}[1] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}[1] ] );
     };
 
     subtest 'dist not found' => sub {
@@ -205,12 +243,12 @@ subtest 'by dist' => sub {
 subtest 'by dist' => sub {
     $t->get_ok( '/v1/release/author/PREACTION' )
       ->status_is( 200 )
-      ->json_is( [ $data{Release}->@[0,2] ] );
+      ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,2] ] );
 
     subtest 'since' => sub {
         $t->get_ok( '/v1/release/author/PREACTION?since=2016-08-20T00:00:00Z' )
           ->status_is( 200 )
-          ->json_is( [ $data{Release}[2] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}[2] ] );
     };
 
     subtest 'dist not found' => sub {

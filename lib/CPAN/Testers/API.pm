@@ -37,7 +37,10 @@ L<CPAN::Testers::Schema/connect_from_config> for details.
 
 =cut
 
-has schema => sub { CPAN::Testers::Schema->connect_from_config };
+has schema => sub {
+    require CPAN::Testers::Schema;
+    return CPAN::Testers::Schema->connect_from_config;
+};
 
 =method startup
 

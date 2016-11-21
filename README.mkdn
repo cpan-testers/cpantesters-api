@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.001
+version 0.002
 
 # STATUS
 
@@ -37,6 +37,36 @@ schema is connected from the local user's config. See
 
 This method starts up the application, loads any plugins, sets up routes,
 and registers helpers.
+
+## render\_error
+
+    return $c->render_error( 400 => 'Bad Request' );
+    return $c->render_error( 400, {
+        path => '/since',
+        message => 'Invalid date/time',
+    } );
+
+Render an error in JSON like other OpenAPI errors. The first argument
+is the HTTP status code. The remaining arguments are a list of errors
+to report. Plain strings are turned into one-element hashrefs with a
+`message` key. Hashrefs are used as-is.
+
+The resulting JSON looks like so:
+
+    {
+        "errors":  [
+            { "message": 'Bad Request' }
+        ]
+    }
+
+    {
+        "errors":  [
+            {
+                "path": "/since",
+                "message": "Invalid date/time"
+            }
+        ]
+    }
 
 # SEE ALSO
 

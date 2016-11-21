@@ -2,6 +2,26 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - Added `render_error` helper to reduce boilerplate for error
+      reporting.
+
+    - Added `Rexfile` deploy script to deploy the app with
+      [Rex](http://rexify.org).
+
+    [Fixed]
+
+    - Reduced the amount of release data transmitted. There were fields
+      in the release summary API that aren't important or needed, so
+      they were removed. Also, results for development Perl releases are
+      no longer included in the API.
+
+    - Disabled the `?since` parameter when querying all release summary
+      data. This feature causes the database query to be too slow:
+      Fetching all the data takes about a minute, fetching only the last
+      day's worth of data takes hours before it times out.
+
 0.001     2016-11-19 16:51:52-06:00 America/Chicago
 
     - Initial release. This module is a JSON API for CPAN Testers data

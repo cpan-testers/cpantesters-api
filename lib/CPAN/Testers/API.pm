@@ -57,7 +57,51 @@ sub startup ( $app ) {
         allow_invalid_ref => 1,
     } );
     $app->helper( schema => sub { shift->app->schema } );
+    $app->helper( render_error => \&render_error );
     Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
+}
+
+=method render_error
+
+    return $c->render_error( 400 => 'Bad Request' );
+    return $c->render_error( 400, {
+        path => '/since',
+        message => 'Invalid date/time',
+    } );
+
+Render an error in JSON like other OpenAPI errors. The first argument
+is the HTTP status code. The remaining arguments are a list of errors
+to report. Plain strings are turned into one-element hashrefs with a
+C<message> key. Hashrefs are used as-is.
+
+The resulting JSON looks like so:
+
+    {
+        "errors":  [
+            { "message": 'Bad Request' }
+        ]
+    }
+
+    {
+        "errors":  [
+            {
+                "path": "/since",
+                "message": "Invalid date/time"
+            }
+        ]
+    }
+
+=cut
+
+sub render_error( $c, $status, @errors ) {
+    return $c->render(
+        status => $status,
+        openapi => {
+            errors => [
+                map { !ref $_ ? { message => $_ } : $_ } @errors,
+            ],
+        },
+    );
 }
 
 1;

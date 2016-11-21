@@ -78,16 +78,7 @@ sub release( $c ) {
     # not be optimized to return in a reasonable time.
     if ( my $since = $c->param( 'since' ) ) {
         unless ( $c->validation->param( 'dist' ) || $c->validation->param( 'author' ) ) {
-            return $c->render(
-                status => 400,
-                openapi => {
-                    errors => [
-                        {
-                            message => '"since" parameter not allowed',
-                        },
-                    ],
-                },
-            );
+            return $c->render_error( 400 => '"since" parameter not allowed' );
         }
         $rs = $rs->since( $since );
     }
@@ -97,31 +88,13 @@ sub release( $c ) {
         $rs = $rs->by_dist( $dist );
         @results = $rs->all;
         if ( !@results ) {
-            return $c->render(
-                status => 404,
-                openapi => {
-                    errors => [
-                        {
-                            message => sprintf( 'Distribution "%s" not found', $dist ),
-                        },
-                    ],
-                },
-            );
+            return $c->render_error( 404, sprintf 'Distribution "%s" not found', $dist );
         }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {
         @results = $rs->by_author( $author )->all;
         if ( !@results ) {
-            return $c->render(
-                status => 404,
-                openapi => {
-                    errors => [
-                        {
-                            message => sprintf( 'Author "%s" not found', $author ),
-                        },
-                    ],
-                },
-            );
+            return $c->render_error( 404, sprintf 'Author "%s" not found', $author );
         }
     }
     else {

@@ -241,7 +241,7 @@ subtest 'by dist' => sub {
     };
 };
 
-subtest 'by dist' => sub {
+subtest 'by author' => sub {
     $t->get_ok( '/v1/release/author/PREACTION' )
       ->status_is( 200 )
       ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,2] ] );
@@ -252,7 +252,7 @@ subtest 'by dist' => sub {
           ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}[2] ] );
     };
 
-    subtest 'dist not found' => sub {
+    subtest 'author not found' => sub {
         $t->get_ok( '/v1/release/author/NOT_FOUND' )
           ->status_is( 404 )
           ->json_is( {

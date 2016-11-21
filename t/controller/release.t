@@ -236,7 +236,7 @@ subtest 'by dist' => sub {
         $t->get_ok( '/v1/release/dist/NOT_FOUND' )
           ->status_is( 404 )
           ->json_is( {
-              errors => [ { message =>  'Distribution "NOT_FOUND" not found' } ],
+              errors => [ { message =>  'Distribution "NOT_FOUND" not found', 'path' => '/' } ],
           } );
     };
 };
@@ -256,7 +256,7 @@ subtest 'by dist' => sub {
         $t->get_ok( '/v1/release/author/NOT_FOUND' )
           ->status_is( 404 )
           ->json_is( {
-              errors => [ { message =>  'Author "NOT_FOUND" not found' } ],
+              errors => [ { message =>  'Author "NOT_FOUND" not found', path => '/' } ],
           } );
     };
 };

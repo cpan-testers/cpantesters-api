@@ -78,7 +78,10 @@ The resulting JSON looks like so:
 
     {
         "errors":  [
-            { "message": 'Bad Request' }
+            {
+                "path": "/",
+                "message": "Bad Request"
+            }
         ]
     }
 
@@ -98,7 +101,7 @@ sub render_error( $c, $status, @errors ) {
         status => $status,
         openapi => {
             errors => [
-                map { !ref $_ ? { message => $_ } : $_ } @errors,
+                map { !ref $_ ? { message => $_, path => '/' } : $_ } @errors,
             ],
         },
     );

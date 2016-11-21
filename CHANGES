@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.002     2016-11-20 19:15:28-06:00 America/Chicago
+
     [Added]
 
     - Added `render_error` helper to reduce boilerplate for error

@@ -1,4 +1,4 @@
 #!/bin/bash
 . /opt/local/perlbrew/etc/bashrc
 eval $( perl -Mlocal::lib )
-exec cpantesters-api prefork 2>&1
+exec cpantesters-api prefork -l http://*:8000 2>&1

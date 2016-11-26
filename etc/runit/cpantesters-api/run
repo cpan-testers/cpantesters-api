@@ -1,0 +1,4 @@
+#!/bin/bash
+. /opt/local/perlbrew/etc/bashrc
+eval $( perl -Mlocal::lib )
+exec cpantesters-api prefork 2>&1

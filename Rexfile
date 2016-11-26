@@ -24,6 +24,7 @@ L<Rex|http://rexify.org>
 =cut
 
 use Rex -feature => [ 1.4 ];
+use Rex::Commands::Sync;
 
 #######################################################################
 # Groups
@@ -65,6 +66,12 @@ task deploy =>
     group => 'api',
     sub {
         run 'source ~/.profile; cpanm CPAN::Testers::API DBD::mysql';
+        file '~/service/cpantesters-api/run',
+            source => 'etc/runit/cpantesters-api/run';
+        file '~/service/cpantesters-api/log/run',
+            source => 'etc/runit/cpantesters-api/log/run';
+        file '~/service/cpantesters-api/log/main',
+            ensure => 'directory';
     };
 
 =head2 deploy_dev

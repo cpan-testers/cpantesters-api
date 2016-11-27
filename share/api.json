@@ -27,6 +27,7 @@
                         "description": "A list of release objects",
                         "schema": {
                             "type": "array",
+                            "title": "ReleasesArray",
                             "items": { "$ref": "#/definitions/Release" }
                         }
                     }
@@ -104,6 +105,7 @@
     "definitions": {
         "Release": {
             "type": "object",
+            "title": "Release",
             "description": "A summary of test reports for a single CPAN release",
             "properties": {
                 "dist": {

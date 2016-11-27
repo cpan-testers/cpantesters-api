@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.002
+version 0.003
 
 # STATUS
 
@@ -55,7 +55,10 @@ The resulting JSON looks like so:
 
     {
         "errors":  [
-            { "message": 'Bad Request' }
+            {
+                "path": "/",
+                "message": "Bad Request"
+            }
         ]
     }
 

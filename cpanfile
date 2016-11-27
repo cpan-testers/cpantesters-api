@@ -1,3 +1,4 @@
+requires "Alien::SwaggerUI" => "0";
 requires "CPAN::Testers::Schema" => "0.002";
 requires "File::Share" => "0";
 requires "Import::Base" => "0.012";

@@ -2,6 +2,11 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - Introductory information on the root
+    - API documentation using Alien::SwaggerUI
+
 0.002     2016-11-20 19:15:28-06:00 America/Chicago
 
     [Added]

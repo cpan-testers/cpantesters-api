@@ -66,12 +66,18 @@ task deploy =>
     group => 'api',
     sub {
         run 'source ~/.profile; cpanm CPAN::Testers::API DBD::mysql';
-        file '~/service/cpantesters-api/run',
-            source => 'etc/runit/cpantesters-api/run';
-        file '~/service/cpantesters-api/log/run',
-            source => 'etc/runit/cpantesters-api/log/run';
         file '~/service/cpantesters-api/log/main',
             ensure => 'directory';
+        file '~/service/cpantesters-api/run',
+            source => 'etc/runit/cpantesters-api/run',
+            on_change => sub {
+                run 'sv restart ~/service/cpantesters-api';
+            };
+        file '~/service/cpantesters-api/log/run',
+            source => 'etc/runit/cpantesters-api/log/run',
+            on_change => sub {
+                run 'sv restart ~/service/cpantesters-api';
+            };
     };
 
 =head2 deploy_dev

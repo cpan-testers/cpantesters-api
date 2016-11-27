@@ -109,6 +109,7 @@ task deploy_dev =>
 
         Rex::Logger::info( 'Installing ' . $dist );
         run 'source ~/.profile; cpanm ~/dist/' . $dist;
+        run 'sv restart ~/service/cpantesters-api';
     };
 
 #######################################################################

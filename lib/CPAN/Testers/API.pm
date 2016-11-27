@@ -24,8 +24,10 @@ L<http://www.cpantesters.org>
 
 use Mojo::Base 'Mojolicious';
 use CPAN::Testers::API::Base;
-use File::Share qw( dist_file );
+use File::Share qw( dist_dir dist_file );
 use Log::Any::Adapter;
+use Alien::SwaggerUI;
+use File::Spec::Functions qw( catdir catfile );
 
 =method schema
 
@@ -52,12 +54,28 @@ and registers helpers.
 =cut
 
 sub startup ( $app ) {
+    unshift @{ $app->renderer->paths },
+        catdir( dist_dir( 'CPAN-Testers-API' ), 'templates' );
+    unshift @{ $app->static->paths },
+        catdir( dist_dir( 'CPAN-Testers-API' ), 'public' );
+
     $app->plugin( OpenAPI => {
         url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
         allow_invalid_ref => 1,
     } );
     $app->helper( schema => sub { shift->app->schema } );
     $app->helper( render_error => \&render_error );
+
+    $app->routes->get( '/' => 'index' );
+    $app->routes->get( '/docs/*path' => { path => 'index.html' } )->to(
+        cb => sub {
+            my ( $c ) = @_;
+            my $path = catfile( Alien::SwaggerUI->root_dir, $c->stash( 'path' ) );
+            my $file = Mojo::Asset::File->new( path => $path );
+            $c->reply->asset( $file );
+        },
+    );
+
     Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }
 

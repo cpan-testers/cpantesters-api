@@ -6,6 +6,7 @@
     "paths": {
         "/release": {
             "get": {
+                "operationId": "release",
                 "description": "Get summary test report information about CPAN releases",
                 "x-mojo-to": {
                     "controller": "Release",
@@ -28,6 +29,7 @@
 
         "/release/dist/{dist}": {
             "get": {
+                "operationId": "release_dist",
                 "description": "Get summary test report information about CPAN releases for a particular distribution",
                 "x-mojo-to": {
                     "controller": "Release",
@@ -55,6 +57,7 @@
 
         "/release/author/{author}": {
             "get": {
+                "operationId": "release_author",
                 "description": "Get summary test report information about CPAN releases for a particular author",
                 "x-mojo-to": {
                     "controller": "Release",

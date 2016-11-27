@@ -69,15 +69,10 @@ task deploy =>
         file '~/service/cpantesters-api/log/main',
             ensure => 'directory';
         file '~/service/cpantesters-api/run',
-            source => 'etc/runit/cpantesters-api/run',
-            on_change => sub {
-                run 'sv restart ~/service/cpantesters-api';
-            };
+            source => 'etc/runit/cpantesters-api/run';
         file '~/service/cpantesters-api/log/run',
-            source => 'etc/runit/cpantesters-api/log/run',
-            on_change => sub {
-                run 'sv restart ~/service/cpantesters-api';
-            };
+            source => 'etc/runit/cpantesters-api/log/run';
+        run 'sv restart ~/service/cpantesters-api';
     };
 
 =head2 deploy_dev

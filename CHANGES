@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.003     2016-11-26 21:10:39-06:00 America/Chicago
+
     [Added]
 
     - Introductory information on the root

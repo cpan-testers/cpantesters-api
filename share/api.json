@@ -1,6 +1,13 @@
 {
     "swagger": "2.0",
-    "info": { "version": "1.0", "title": "CPAN Testers API" },
+    "info": {
+        "version": "1.0",
+        "title": "CPAN Testers API",
+        "description": "API for CPAN Testers data"
+    },
+    "consumes": [ "application/json" ],
+    "produces": [ "application/json" ],
+    "schemes": [ "http" ],
     "basePath": "/v1",
 
     "paths": {

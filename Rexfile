@@ -66,13 +66,20 @@ task deploy =>
     group => 'api',
     sub {
         run 'source ~/.profile; cpanm CPAN::Testers::API DBD::mysql';
-        file '~/service/cpantesters-api/log/main',
+        file '~/service/api/log/main',
             ensure => 'directory';
-        file '~/service/cpantesters-api/run',
-            source => 'etc/runit/cpantesters-api/run';
-        file '~/service/cpantesters-api/log/run',
-            source => 'etc/runit/cpantesters-api/log/run';
-        run 'sv restart ~/service/cpantesters-api';
+        file '~/service/api/run',
+            source => 'etc/runit/api/run';
+        file '~/service/api/log/run',
+            source => 'etc/runit/api/log/run';
+        file '~/service/broker/log/main',
+            ensure => 'directory';
+        file '~/service/broker/run',
+            source => 'etc/runit/broker/run';
+        file '~/service/broker/log/run',
+            source => 'etc/runit/broker/log/run';
+        run 'sv restart ~/service/api';
+        run 'sv restart ~/service/broker';
     };
 
 =head2 deploy_dev
@@ -104,7 +111,20 @@ task deploy_dev =>
 
         Rex::Logger::info( 'Installing ' . $dist );
         run 'source ~/.profile; cpanm ~/dist/' . $dist;
-        run 'sv restart ~/service/cpantesters-api';
+        file '~/service/api/log/main',
+            ensure => 'directory';
+        file '~/service/api/run',
+            source => 'etc/runit/api/run';
+        file '~/service/api/log/run',
+            source => 'etc/runit/api/log/run';
+        file '~/service/broker/log/main',
+            ensure => 'directory';
+        file '~/service/broker/run',
+            source => 'etc/runit/broker/run';
+        file '~/service/broker/log/run',
+            source => 'etc/runit/broker/log/run';
+        run 'sv restart ~/service/api';
+        run 'sv restart ~/service/broker';
     };
 
 #######################################################################

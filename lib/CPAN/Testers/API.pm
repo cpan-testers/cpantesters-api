@@ -66,8 +66,9 @@ sub startup ( $app ) {
     $app->helper( schema => sub { shift->app->schema } );
     $app->helper( render_error => \&render_error );
 
-    $app->routes->get( '/' => 'index' );
-    $app->routes->get( '/docs/*path' => { path => 'index.html' } )->to(
+    my $r = $app->routes;
+    $r->get( '/' => 'index' );
+    $r->get( '/docs/*path' => { path => 'index.html' } )->to(
         cb => sub {
             my ( $c ) = @_;
             my $path = catfile( Alien::SwaggerUI->root_dir, $c->stash( 'path' ) );

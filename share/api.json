@@ -89,6 +89,89 @@
                     }
                 }
             }
+        },
+
+        "/upload": {
+            "get": {
+                "operationId": "upload",
+                "description": "Query the uploads to CPAN. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "x-mojo-to": {
+                    "controller": "Upload",
+                    "action": "get"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "The request or parameters are incorrect"
+                    },
+                    "200": {
+                        "description": "An array of objects describing uploads",
+                        "schema": {
+                            "type": "array",
+                            "title": "UploadsArray",
+                            "items": { "$ref": "#/definitions/Upload" }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/upload/dist/{dist}": {
+            "get": {
+                "operationId": "upload_dist",
+                "description": "Get the uploads for the given dist. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "x-mojo-to": {
+                    "controller": "Upload",
+                    "action": "get"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" },
+                    {
+                        "name": "dist",
+                        "in": "path",
+                        "description": "The CPAN distribution name (like 'CPAN-Testers-Schema')",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": { "$ref": "#/paths/~1upload/get/responses/200" },
+                    "400": { "$ref": "#/paths/~1upload/get/responses/400" },
+                    "404": {
+                        "description": "The distribution was not found"
+                    }
+                }
+            }
+        },
+
+        "/upload/author/{author}": {
+            "get": {
+                "operationId": "upload_author",
+                "description": "Get the uploads for the given author. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "x-mojo-to": {
+                    "controller": "Upload",
+                    "action": "get"
+                },
+                "parameters": [
+                    { "$ref": "#/parameters/since" },
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "The CPAN author name (like 'PREACTION')",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": { "$ref": "#/paths/~1upload/get/responses/200" },
+                    "400": { "$ref": "#/paths/~1upload/get/responses/400" },
+                    "404": {
+                        "description": "The author was not found"
+                    }
+                }
+            }
         }
     },
 
@@ -135,6 +218,35 @@
                 "unknown": {
                     "type": "integer",
                     "description": "The number of unknown reports for this release"
+                }
+            }
+        },
+
+        "Upload": {
+            "type": "object",
+            "title": "Upload",
+            "description": "A release to CPAN",
+            "properties": {
+                "dist": {
+                    "type": "string",
+                    "description": "The distribution name"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The distribution release version"
+                },
+                "author": {
+                    "type": "string",
+                    "description": "The CPAN ID of the author who released this version of this distribution"
+                },
+                "filename": {
+                    "type": "string",
+                    "description": "The filename on PAUSE, without the author directory"
+                },
+                "released": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The date/time the file was released to CPAN, in UTC"
                 }
             }
         }

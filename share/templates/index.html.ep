@@ -60,7 +60,7 @@
             </ul>
 
             <p>For full documentation on the available APIs, see <a
-            href="/docs/?url=/v1">the API documentation</a>.</p>
+            href="/docs/?url=/v1#/default">the API documentation</a>.</p>
 
             If you'd like to help contribute to the CPAN Testers API,
             visit <a

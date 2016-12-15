@@ -6,10 +6,11 @@ and patches.
 
 ## Communication
 
-XXX Add communication forums
-
-If you're not sure about anything, please open an issue and ask, or
-e-mail the project founder <preaction@cpan.org> or [talk to us on IRC on
+If you're not sure about anything, please [open an issue on Github
+issues](http://github.com/cpan-testers/cpantesters-api/issues) and ask, or ask
+the [CPAN Testers Discuss mailing
+list](http://lists.perl.org/list/cpan-testers-discuss.html), or
+e-mail the project leader <preaction@cpan.org> or [talk to us on IRC on
 irc.perl.org channel #cpantesters-discuss](https://chat.mibbit.com/?channel=%23cpantesters-discuss&server=irc.perl.org)!
 
 ## Standard of Conduct
@@ -28,10 +29,20 @@ Remember, all the people who contribute to this project are volunteers.
 
 ## About this Project
 
+The [CPAN Testers project](http://cpantesters.org) is an effort to
+ensure the stability and reliability of Perl and CPAN by running the
+test suites of uploaded CPAN distributions on various Perl versions,
+OSes, and hardware; collecting the results in a database; and alerting
+distribution authors when there is a test failure.
+
 ### Project Goals
 
-XXX Add project goals
-
+The CPAN Testers API is a JSON API on to the data stored in the CPAN
+Testers database. The goal of this subproject is to be an
+easily-consumable API so that users can build their own tools around
+CPAN Testers data. This subproject is also a communication hub for the
+disparate parts of the CPAN Testers data pipeline, and allows users to
+tap into that communication to receive immediate data updates.
 
 ### Repository Layout
 
@@ -43,6 +54,21 @@ below.
 Modules are located in the `lib/` directory. Most of the functionality
 of the project should be in a module. If the functionality should be
 available to users from a script, the script should call the module.
+
+##### `lib/CPAN/Testers/API.pm`
+
+This is the main application class. This project uses [the Mojolicious
+web framework](http://mojolicious.org). The main startup routines are
+located in this file: reading the API spec (see below), locating the
+template directory (see below), and setting up additional routes and
+helpers.
+
+##### `lib/CPAN/Testers/API/Controller/`
+
+This is where API controllers are kept. Each controller handles
+a section of the API, and API routes are linked from the API
+specification in `share/api.json` (see below) to a controller name and
+method using the `x-mojo-to` key in the API spec.
 
 #### `bin/`
 
@@ -68,6 +94,55 @@ code are stored in `share/`. This includes default config files, default
 content, informational files, read-only databases, and other such. This
 project uses [File::Share](http://metacpan.com/pod/File::Share) to
 locate these files at run-time.
+
+##### `share/api.json`
+
+This is the [OpenAPI specification](http://openapis.org) for the CPAN
+Testers API. This JSON document documents each API endpoint, the input
+it can receive, the output it will send, and any error conditions that
+might occur. This API documentation is then displayed [using
+SwaggerUI](http://swagger.io/swagger-ui) (via
+[Alien::SwaggerUI](http://metacpan.org/pod/Alien::SwaggerUI)) at
+<http://api.cpantesters.org>.
+
+Every new API endpoint must be started and documented here. This
+document is used by
+[Mojolicious::Plugin::OpenAPI](http://metacpan.org/pod/Mojolicious::Plugin::OpenAPI)
+to generate the Mojolicious routes and validate the input and output
+automatically. Each route should have an `x-mojo-to` key to link it to
+a `controller` (class) and `action` (method).
+
+##### `share/templates`
+
+This is where Mojolicious templates should go. The templates are located
+after install using [File::Share](http://metacpan.org/pod/File::Share).
+
+##### `share/public`
+
+This is where extra, ancillary files should go (like CSS, JavaScript,
+and images). These files are located after install using
+[File::Share](http://metacpan.org/pod/File::Share).
+
+#### `Rexfile`
+
+This file contains all the [Rex](http://rexify.org) tasks to deploy this
+project to CPAN Testers servers (or development VMs). This `Rexfile`
+coordinates with [the CPAN Testers deploy
+project](http://github.com/cpan-testers/cpantesters-deploy) (which
+prepares a machine for a specific role) to allow deploying the
+application with minimal privileges.
+
+#### `etc/`
+
+This directory contains additional things that aren't examples (which
+would go in `eg/`), but also must not be part of the CPAN distribution
+(which would go in `share/`).
+
+##### `etc/runit/`
+
+These are [runit](smarden.org/runit/) service files used by CPAN Testers
+to run the API daemon and the [Mercury](http://preaction.me/mercury)
+daemon (a websocket message broker).
 
 ## What to Contribute
 
@@ -119,8 +194,6 @@ cpan App::cpanminus
 ```
 
 You may need to be root or Administrator to install cpanminus.
-
-XXX Add this for Perl version requirements
 
 This project also requires Perl version 5.24. If your Perl is not recent
 enough, you can install a new version of Perl in a local directory by

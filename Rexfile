@@ -70,6 +70,8 @@ task deploy =>
             ensure => 'directory';
         file '~/service/api/run',
             source => 'etc/runit/api/run';
+        file '~/service/api/api.conf',
+            source => 'etc/runit/api/api.conf';
         file '~/service/api/log/run',
             source => 'etc/runit/api/log/run';
         file '~/service/broker/log/main',
@@ -115,6 +117,8 @@ task deploy_dev =>
             ensure => 'directory';
         file '~/service/api/run',
             source => 'etc/runit/api/run';
+        file '~/service/api/api.conf',
+            source => 'etc/runit/api/api.conf';
         file '~/service/api/log/run',
             source => 'etc/runit/api/log/run';
         file '~/service/broker/log/main',

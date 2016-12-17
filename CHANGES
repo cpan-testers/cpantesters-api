@@ -2,6 +2,16 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - /uploads API for querying the CPAN uploads information table. See
+      http://api.cpantesters.org/docs/?url=/v1#!/default/uploads for
+      details.
+
+    - Upload feeds to get push notifications of new CPAN uploads via
+      WebSockets. Subscribe to any /uploads endpoint to get a feed of
+      new information from that endpoint.
+
 0.003     2016-11-26 21:10:39-06:00 America/Chicago
 
     [Added]

@@ -125,5 +125,30 @@ subtest 'input validation' => sub {
     };
 };
 
+subtest 'websocket feeds' => sub {
+    my $broker = Mojolicious->new;
+    $broker->routes->websocket( '/sub/*topic' )->to( cb => sub( $c ) {
+        $c->send( 'Got topic: ' . $c->stash( 'topic' ) );
+        $c->finish;
+    } );
+    my $broker_t = Test::Mojo->new( $broker );
+
+    my $broker_url = $broker->ua->server->nb_url;
+    $t->app->config->{broker} = 'ws://' . $broker_url->host_port;
+
+    $t->websocket_ok( '/v1/upload' )
+      ->message_ok
+      ->message_is( 'Got topic: upload/dist', 'default to all uploaded dists' )
+      ->finish_ok;
+    $t->websocket_ok( '/v1/upload/dist/Statocles' )
+      ->message_ok
+      ->message_is( 'Got topic: upload/dist/Statocles' )
+      ->finish_ok;
+    $t->websocket_ok( '/v1/upload/author/PREACTION' )
+      ->message_ok
+      ->message_is( 'Got topic: upload/author/PREACTION' )
+      ->finish_ok;
+};
+
 done_testing;
 

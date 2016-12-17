@@ -97,4 +97,37 @@ sub get( $c ) {
     );
 }
 
+=method feed
+
+Get a feed for uploads to CPAN. This feed returns the same information as
+the regular API, but as they come in.
+
+=cut
+
+sub feed( $c ) {
+    $c->inactivity_timeout( 60000 );
+    my $path = $c->stash( 'dist' ) ? '/upload/dist/' . $c->stash( 'dist' )
+             : $c->stash( 'author' ) ? '/upload/author/' . $c->stash( 'author' )
+             : '/upload/dist' # Default to all dists
+             ;
+
+    my $ua = Mojo::UserAgent->new( inactivity_timeout => 6000 );
+    $ua->websocket(
+        $c->app->config->{broker} . '/sub' . $path,
+        sub( $ua, $tx ) {
+            $tx->on(finish => sub {
+                my ($tx, $code, $reason) = @_;
+                $c->finish;
+            });
+
+            $tx->on( message => sub( $tx, $msg ) {
+                $c->send( $msg );
+            } );
+        }
+    );
+
+    $c->stash( ua => $ua );
+    $c->rendered( 101 );
+}
+
 1;

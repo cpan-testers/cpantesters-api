@@ -13,6 +13,25 @@ This is a REST API on to the data contained in the CPAN Testers
 database. This data includes test reports, CPAN distributions, and
 various aggregate test reporting.
 
+=head1 CONFIG
+
+This application can be configured by setting the C<MOJO_CONFIG>
+environment variable to the path to a configuration file. The
+configuration file is a Perl script containing a single hash reference,
+like:
+
+    # api.conf
+    {
+        broker => 'ws://127.0.0.1:5000',
+    }
+
+The possible configuration keys are below:
+
+=head2 broker
+
+The URL to a L<Mercury> message broker, starting with C<ws://>. This
+broker is used to forward messages to every connected user.
+
 =head1 SEE ALSO
 
 L<Mojolicious>, L<Mojolicious::Plugin::OpenAPI>,
@@ -59,12 +78,10 @@ sub startup ( $app ) {
     unshift @{ $app->static->paths },
         catdir( dist_dir( 'CPAN-Testers-API' ), 'public' );
 
-    $app->plugin( OpenAPI => {
-        url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
-        allow_invalid_ref => 1,
+    $app->moniker( 'api' );
+    $app->plugin( Config => {
+        default => { }, # Allow living without config file
     } );
-    $app->helper( schema => sub { shift->app->schema } );
-    $app->helper( render_error => \&render_error );
 
     my $r = $app->routes;
     $r->get( '/' => 'index' );
@@ -76,6 +93,18 @@ sub startup ( $app ) {
             $c->reply->asset( $file );
         },
     );
+
+    $r->websocket( '/v1/upload' )->to( 'Upload#feed' );
+    $r->websocket( '/v1/upload/dist/:dist' )->to( 'Upload#feed' );
+    $r->websocket( '/v1/upload/author/:author' )->to( 'Upload#feed' );
+
+
+    $app->plugin( OpenAPI => {
+        url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
+        allow_invalid_ref => 1,
+    } );
+    $app->helper( schema => sub { shift->app->schema } );
+    $app->helper( render_error => \&render_error );
 
     Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }

@@ -115,9 +115,11 @@ sub feed( $c ) {
     $ua->websocket(
         $c->app->config->{broker} . '/sub' . $path,
         sub( $ua, $tx ) {
-            $tx->on(finish => sub {
-                my ($tx, $code, $reason) = @_;
-                $c->finish;
+            $c->stash( tx => $tx );
+            $tx->on(finish => sub( $tx, $code ) {
+                # Broker closed connection, so close connection with
+                # client, unless that's what we're already doing
+                $c->finish if !$c->stash( 'finished' );
             });
 
             $tx->on( message => sub( $tx, $msg ) {
@@ -127,6 +129,13 @@ sub feed( $c ) {
     );
 
     $c->stash( ua => $ua );
+    $c->on( finish => sub( $c, $tx ) {
+        # Client closed connection, so close connection with broker
+        if ( my $tx = $c->stash( 'tx' ) ) {
+            $c->stash( finished => 1 );
+            $tx->finish;
+        }
+    } );
     $c->rendered( 101 );
 }
 

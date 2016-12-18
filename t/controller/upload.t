@@ -126,10 +126,20 @@ subtest 'input validation' => sub {
 };
 
 subtest 'websocket feeds' => sub {
+    my @warnings;
+    local $SIG{__WARN__} = sub( @warns ) { push @warnings, @warns };
+
     my $broker = Mojolicious->new;
     $broker->routes->websocket( '/sub/*topic' )->to( cb => sub( $c ) {
-        $c->send( 'Got topic: ' . $c->stash( 'topic' ) );
-        $c->finish;
+        state $peers = [];
+        push $peers->@*, $c;
+        $t->app->log->info( "Added 1, Got " . ( scalar @$peers ) . " peers" );
+        $_->send( 'Got topic: ' . $c->stash( 'topic' ) ) for $peers->@*;
+        $c->on( finish => sub( $c, $tx ) {
+            $peers = [ grep { $_ ne $c } $peers->@* ],
+            $t->app->log->info( "Lost 1, Got " . ( scalar @$peers ) . " peers" );
+        } );
+        $c->finish if $c->stash( 'topic' ) =~ /STOP$/;
     } );
     my $broker_t = Test::Mojo->new( $broker );
 
@@ -139,15 +149,27 @@ subtest 'websocket feeds' => sub {
     $t->websocket_ok( '/v1/upload' )
       ->message_ok
       ->message_is( 'Got topic: upload/dist', 'default to all uploaded dists' )
-      ->finish_ok;
-    $t->websocket_ok( '/v1/upload/dist/Statocles' )
+      ;
+
+    my $peer = Test::Mojo->new( $t->app );
+    $peer->websocket_ok( '/v1/upload/dist/Statocles' )
       ->message_ok
       ->message_is( 'Got topic: upload/dist/Statocles' )
       ->finish_ok;
-    $t->websocket_ok( '/v1/upload/author/PREACTION' )
+
+    $t->message_ok
+      ->message_is( 'Got topic: upload/dist/Statocles', 'got another message' )
+      ->finish_ok
+      ;
+
+    $t->websocket_ok( '/v1/upload/author/STOP' )
       ->message_ok
-      ->message_is( 'Got topic: upload/author/PREACTION' )
-      ->finish_ok;
+      ->message_is( 'Got topic: upload/author/STOP' )
+      ->finish_ok
+      ;
+
+    ok !@warnings, '... and we did it without warnings'
+        or diag explain \@warnings;
 };
 
 done_testing;

@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.003
+version 0.004
 
 # STATUS
 
@@ -70,6 +70,25 @@ The resulting JSON looks like so:
             }
         ]
     }
+
+# CONFIG
+
+This application can be configured by setting the `MOJO_CONFIG`
+environment variable to the path to a configuration file. The
+configuration file is a Perl script containing a single hash reference,
+like:
+
+    # api.conf
+    {
+        broker => 'ws://127.0.0.1:5000',
+    }
+
+The possible configuration keys are below:
+
+## broker
+
+The URL to a [Mercury](https://metacpan.org/pod/Mercury) message broker, starting with `ws://`. This
+broker is used to forward messages to every connected user.
 
 # SEE ALSO
 

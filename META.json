@@ -33,12 +33,14 @@
       "runtime" : {
          "requires" : {
             "Alien::SwaggerUI" : "0",
-            "CPAN::Testers::Schema" : "0.002",
+            "CPAN::Testers::Schema" : "0.004",
             "File::Share" : "0",
             "Import::Base" : "0.012",
             "Log::Any" : "1.045",
             "Log::Any::Adapter::MojoLog" : "0.02",
+            "Mercury" : "0.010",
             "Mojolicious" : "6",
+            "Mojolicious::Plugin::Config" : "0",
             "Mojolicious::Plugin::OpenAPI" : "0",
             "perl" : "5.024"
          }
@@ -52,6 +54,8 @@
             "File::Spec" : "0",
             "IO::Handle" : "0",
             "IPC::Open3" : "0",
+            "SQL::Translator" : "0.11018",
+            "Test::Lib" : "0",
             "Test::More" : "1.001005"
          }
       }
@@ -59,15 +63,19 @@
    "provides" : {
       "CPAN::Testers::API" : {
          "file" : "lib/CPAN/Testers/API.pm",
-         "version" : "0.003"
+         "version" : "0.004"
       },
       "CPAN::Testers::API::Base" : {
          "file" : "lib/CPAN/Testers/API/Base.pm",
-         "version" : "0.003"
+         "version" : "0.004"
       },
       "CPAN::Testers::API::Controller::Release" : {
          "file" : "lib/CPAN/Testers/API/Controller/Release.pm",
-         "version" : "0.003"
+         "version" : "0.004"
+      },
+      "CPAN::Testers::API::Controller::Upload" : {
+         "file" : "lib/CPAN/Testers/API/Controller/Upload.pm",
+         "version" : "0.004"
       }
    },
    "release_status" : "stable",
@@ -83,7 +91,7 @@
       },
       "x_IRC" : "irc://irc.perl.org/#cpantesters-discuss"
    },
-   "version" : "0.003",
+   "version" : "0.004",
    "x_authority" : "cpan:PREACTION",
    "x_serialization_backend" : "Cpanel::JSON::XS version 3.0216"
 }

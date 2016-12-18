@@ -28,12 +28,14 @@ my %WriteMakefileArgs = (
   "NAME" => "CPAN::Testers::API",
   "PREREQ_PM" => {
     "Alien::SwaggerUI" => 0,
-    "CPAN::Testers::Schema" => "0.002",
+    "CPAN::Testers::Schema" => "0.004",
     "File::Share" => 0,
     "Import::Base" => "0.012",
     "Log::Any" => "1.045",
     "Log::Any::Adapter::MojoLog" => "0.02",
+    "Mercury" => "0.010",
     "Mojolicious" => 6,
+    "Mojolicious::Plugin::Config" => 0,
     "Mojolicious::Plugin::OpenAPI" => 0
   },
   "TEST_REQUIRES" => {
@@ -41,6 +43,8 @@ my %WriteMakefileArgs = (
     "File::Spec" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
+    "SQL::Translator" => "0.11018",
+    "Test::Lib" => 0,
     "Test::More" => "1.001005"
   },
   "VERSION" => "0.004",
@@ -52,7 +56,7 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Alien::SwaggerUI" => 0,
-  "CPAN::Testers::Schema" => "0.002",
+  "CPAN::Testers::Schema" => "0.004",
   "ExtUtils::MakeMaker" => 0,
   "File::Share" => 0,
   "File::Spec" => 0,
@@ -61,8 +65,12 @@ my %FallbackPrereqs = (
   "Import::Base" => "0.012",
   "Log::Any" => "1.045",
   "Log::Any::Adapter::MojoLog" => "0.02",
+  "Mercury" => "0.010",
   "Mojolicious" => 6,
+  "Mojolicious::Plugin::Config" => 0,
   "Mojolicious::Plugin::OpenAPI" => 0,
+  "SQL::Translator" => "0.11018",
+  "Test::Lib" => 0,
   "Test::More" => "1.001005"
 );
 

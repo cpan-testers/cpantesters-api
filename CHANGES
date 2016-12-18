@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.004     2016-12-17 18:28:28-06:00 America/Chicago
+
     [Added]
 
     - /uploads API for querying the CPAN uploads information table. See

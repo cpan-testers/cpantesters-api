@@ -50,13 +50,22 @@
             author</a>, or <a
             href="/docs/?url=/v1#!/default/release_dist">by
             distribution</a>.</li>
+            <li>CPAN uploads for <a
+            href="/docs/?url=/v1#!/default/upload">all of CPAN</a>,
+            <a href="/docs/?url=/v1#!/default/upload_author">by
+            author</a>, or <a
+            href="/docs/?url=/v1#!/default/upload_dist">by
+            distribution</a>. Subscribing to these using a WebSocket
+            will enable push notifications of new uploads to CPAN (see
+            <a
+            href="https://github.com/cpan-testers/cpantesters-api/blob/master/eg/feed.pl">an
+            example WebSocket subscriber using Mojo::UserAgent</a>).</li>
             </ul>
 
             <p>Future data that can be made available by this API include:</p>
 
             <ul>
             <li>CPAN Testers reports</li>
-            <li>CPAN uploads</li>
             </ul>
 
             <p>For full documentation on the available APIs, see <a

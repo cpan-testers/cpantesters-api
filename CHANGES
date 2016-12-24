@@ -2,6 +2,15 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Reorganized OpenAPI spec to include tags for better documentation
+      rendering.
+
+    [Other]
+
+    - Improve example upload feed reader.
+
 0.004     2016-12-17 18:28:28-06:00 America/Chicago
 
     [Added]

@@ -29,9 +29,15 @@ my $ua = Mojo::UserAgent->new(
 );
 $ua->websocket( $topic => sub( $ua, $tx ) {
     say 'WebSocket handshake failed!' and return unless $tx->is_websocket;
+    say sprintf "[%s] Connected", scalar localtime;
     $tx->on( json => sub( $tx, $upload ) {
-        say sprintf qq{Got upload: %s (%s) by %s},
-            $upload->@{qw( dist version author )};
+        say sprintf qq{[%s] Got upload: %s (%s) by %s},
+            scalar localtime, $upload->@{qw( dist version author )};
+    } );
+    $tx->on( finish => sub( $tx, $code ) {
+        say sprintf "[%s] Connection closed: %s",
+            scalar localtime, $code;
+        Mojo::IOLoop->stop;
     } );
 } );
 

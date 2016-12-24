@@ -9,12 +9,23 @@
     "produces": [ "application/json" ],
     "schemes": [ "http" ],
     "basePath": "/v1",
+    "tags": [
+        {
+            "name": "Release",
+            "description": "Per-release test summary data"
+        },
+        {
+            "name": "Upload",
+            "description": "CPAN uploads data"
+        }
+    ],
 
     "paths": {
         "/release": {
             "get": {
-                "operationId": "release",
-                "description": "Get summary test report information about CPAN releases",
+                "tags": [ "Release" ],
+                "operationId": "release_all",
+                "summary": "Get summary test report info about all CPAN releases",
                 "x-mojo-to": {
                     "controller": "Release",
                     "action": "release"
@@ -37,8 +48,9 @@
 
         "/release/dist/{dist}": {
             "get": {
+                "tags": [ "Release" ],
                 "operationId": "release_dist",
-                "description": "Get summary test report information about CPAN releases for a particular distribution",
+                "summary": "Get summary test report info for releases of a distribution",
                 "x-mojo-to": {
                     "controller": "Release",
                     "action": "release"
@@ -65,8 +77,9 @@
 
         "/release/author/{author}": {
             "get": {
+                "tags": [ "Release" ],
                 "operationId": "release_author",
-                "description": "Get summary test report information about CPAN releases for a particular author",
+                "summary": "Get summary test report info for releases by an author",
                 "x-mojo-to": {
                     "controller": "Release",
                     "action": "release"
@@ -93,8 +106,10 @@
 
         "/upload": {
             "get": {
-                "operationId": "upload",
-                "description": "Query the uploads to CPAN. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "tags": [ "Upload" ],
+                "operationId": "upload_all",
+                "summary": "Get all uploads to CPAN",
+                "description": "This route gets uploads to CPAN. Asking for a WebSocket will subscribe to a feed of new uploads.",
                 "x-mojo-to": {
                     "controller": "Upload",
                     "action": "get"
@@ -120,8 +135,10 @@
 
         "/upload/dist/{dist}": {
             "get": {
+                "tags": [ "Upload" ],
                 "operationId": "upload_dist",
-                "description": "Get the uploads for the given dist. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "summary": "Get uploads for a dist",
+                "description": "This route gets uploads to CPAN for a specific distribution. Asking for a WebSocket will subscribe to a feed of new uploads.",
                 "x-mojo-to": {
                     "controller": "Upload",
                     "action": "get"
@@ -148,8 +165,10 @@
 
         "/upload/author/{author}": {
             "get": {
+                "tags": [ "Upload" ],
                 "operationId": "upload_author",
-                "description": "Get the uploads for the given author. Asking for a WebSocket will subscribe to a feed of new uploads.",
+                "summary": "Get uploads for an author",
+                "description": "This route gets uploads to CPAN for the specific author. Asking for a WebSocket will subscribe to a feed of new uploads.",
                 "x-mojo-to": {
                     "controller": "Upload",
                     "action": "get"

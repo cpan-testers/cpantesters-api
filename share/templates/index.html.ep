@@ -45,16 +45,16 @@
 
             <ul>
             <li>Test report summaries (releases) for <a
-            href="/docs/?url=/v1#!/default/release">all of CPAN</a>,
-            <a href="/docs/?url=/v1#!/default/release_author">by
+            href="/docs/?url=/v1#!/Release/all">all of CPAN</a>,
+            <a href="/docs/?url=/v1#!/Release/author">by
             author</a>, or <a
-            href="/docs/?url=/v1#!/default/release_dist">by
+            href="/docs/?url=/v1#!/Release/dist">by
             distribution</a>.</li>
             <li>CPAN uploads for <a
-            href="/docs/?url=/v1#!/default/upload">all of CPAN</a>,
-            <a href="/docs/?url=/v1#!/default/upload_author">by
+            href="/docs/?url=/v1#!/Upload/all">all of CPAN</a>,
+            <a href="/docs/?url=/v1#!/Upload/author">by
             author</a>, or <a
-            href="/docs/?url=/v1#!/default/upload_dist">by
+            href="/docs/?url=/v1#!/Upload/dist">by
             distribution</a>. Subscribing to these using a WebSocket
             will enable push notifications of new uploads to CPAN (see
             <a
@@ -69,7 +69,7 @@
             </ul>
 
             <p>For full documentation on the available APIs, see <a
-            href="/docs/?url=/v1#/default">the API documentation</a>.</p>
+            href="/docs/?url=/v1">the API documentation</a>.</p>
 
             If you'd like to help contribute to the CPAN Testers API,
             visit <a

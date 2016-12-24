@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.005     2016-12-23 22:46:11-06:00 America/Chicago
+
     [Fixed]
 
     - Reorganized OpenAPI spec to include tags for better documentation

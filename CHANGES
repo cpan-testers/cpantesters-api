@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.006     2016-12-27 20:05:59-06:00 America/Chicago
+
     [Fixed]
 
     - Fixed index page documentation links (broken in 0.005)

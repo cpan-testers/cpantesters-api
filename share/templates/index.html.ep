@@ -45,16 +45,16 @@
 
             <ul>
             <li>Test report summaries (releases) for <a
-            href="/docs/?url=/v1#!/Release/all">all of CPAN</a>,
-            <a href="/docs/?url=/v1#!/Release/author">by
+            href="/docs/?url=/v1#!/Release/release_all">all of CPAN</a>,
+            <a href="/docs/?url=/v1#!/Release/release_author">by
             author</a>, or <a
-            href="/docs/?url=/v1#!/Release/dist">by
+            href="/docs/?url=/v1#!/Release/release_dist">by
             distribution</a>.</li>
             <li>CPAN uploads for <a
-            href="/docs/?url=/v1#!/Upload/all">all of CPAN</a>,
-            <a href="/docs/?url=/v1#!/Upload/author">by
+            href="/docs/?url=/v1#!/Upload/upload_all">all of CPAN</a>,
+            <a href="/docs/?url=/v1#!/Upload/upload_author">by
             author</a>, or <a
-            href="/docs/?url=/v1#!/Upload/dist">by
+            href="/docs/?url=/v1#!/Upload/upload_dist">by
             distribution</a>. Subscribing to these using a WebSocket
             will enable push notifications of new uploads to CPAN (see
             <a

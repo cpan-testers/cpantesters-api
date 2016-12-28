@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.005
+version 0.006
 
 # STATUS
 

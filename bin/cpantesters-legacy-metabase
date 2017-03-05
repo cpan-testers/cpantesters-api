@@ -1,0 +1,99 @@
+#!/usr/bin/env perl
+# ABSTRACT: An API from the legacy Metabase::Web to the local database
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 SEE ALSO
+
+=cut
+
+use Mojo::Base '-base';
+use Mojolicious::Lite;
+use Data::FlexSerializer;
+use Metabase::Fact;
+use Mojo::JSON qw( to_json from_json );
+
+=attr dbh
+
+The database handle to write reports to.
+
+=cut
+
+helper dbh => sub {
+    state $dbh = $_[1] if $_[1];
+    return $dbh;
+};
+
+=route /beta/submit/CPAN-Testers-Metabase
+
+=route /api/v1/submit/CPAN-Testers-Metabase
+
+This route submits a new report into the local copy of the Metabase.
+This is a shim that will remain in-place until all the CPAN Testers clients
+are updated to submit reports via the new API (so, forever).
+
+=cut
+
+# This code was derived from CPAN::Testers::Data::Generator sub cache_report
+# Once this is working, we can force CPAN::Testers::Data::Generator to
+# ignore the Amazon SimpleDB Metabase by making the localonly flag
+# always set to true.
+
+# We are also mimicking parts of Metabase::Web and Metabase::Gateway
+
+sub handle_post {
+    my ( $c ) = @_;
+    my $body = $c->req->json;
+
+    ### Transform it for the current local Metabase
+    # Thaw the Metabase report
+    my $report = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
+        ->from_struct( $body );
+
+    my $guid = $report->core_metadata->{guid};
+    my $updated = $report->core_metadata->{update_time};
+
+    # Encode it to JSON
+    my %facts;
+    for my $fact ( $report->facts ) {
+        my $name = ref $fact;
+        $facts{ $name } = $fact->as_struct;
+        $facts{ $name }{ content } = from_json( $facts{ $name }{ content } );
+    }
+
+    # Serialize it to compress it using Data::FlexSerializer
+    # "report" gets serialized with JSON
+    my $json_zipper = Data::FlexSerializer->new(
+        detect_compression  => 1,
+        detect_json         => 1,
+        output_format       => 'json'
+    );
+    my $report_zip = $json_zipper->serialize( \%facts );
+
+    # "fact" gets serialized with Sereal
+    my $sereal_zipper = Data::FlexSerializer->new(
+        detect_compression  => 1,
+        detect_sereal       => 1,
+        output_format       => 'sereal'
+    );
+    my $fact_zip = $sereal_zipper->serialize( $report );
+
+    $c->app->dbh->do(
+        'INSERT INTO metabase (guid,updated,report,fact) VALUES (?,?,?,?)',
+        {},
+        $guid, $updated, $report_zip, $fact_zip,
+    );
+
+    $c->res->headers->location( '/guid/' . $guid );
+    return $c->render(
+        status => 201,
+        json => { guid => $guid },
+    );
+};
+
+post '/api/v1/submit/CPAN-Testers-Metabase' => \&handle_post;
+post '/beta/submit/CPAN-Testers-Metabase' => \&handle_post;
+
+app->start;

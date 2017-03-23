@@ -14,21 +14,24 @@ use CPAN::Testers::Fact::LegacyReport;
 use CPAN::Testers::Fact::TestSummary;
 use Data::FlexSerializer;
 
-my $dbh = DBI->connect( 'dbi:SQLite::memory:' );
-$dbh->do('CREATE TABLE metabase (
-    `guid` char(36) NOT NULL,
-    `id` int(10),
-    `updated` varchar(32),
-    `report` longblob,
-    `fact` longblob,
-    PRIMARY KEY (`guid`)
-)');
-
 my $SHARE_DIR = path( $Bin, '..', 'share' );
 my $bin_path = path( $Bin, '..', '..', 'bin', 'cpantesters-legacy-metabase' );
 require $bin_path;
 my $t = Test::Mojo->new;
-$t->app->dbh( $dbh );
+
+# App is hooked to an in-memory database by config
+# (t/etc/metabase.conf), so we must deploy a tablespace
+my $dbh = $t->app->dbh;
+$dbh->do(
+    'CREATE TABLE metabase (
+        `guid` char(36) NOT NULL,
+        `id` int(10),
+        `updated` varchar(32),
+        `report` longblob,
+        `fact` longblob,
+        PRIMARY KEY (`guid`)
+    )
+');
 
 subtest 'post report' => sub {
     my $given_report = create_report(
@@ -53,7 +56,6 @@ subtest 'post report' => sub {
     is $got_report->{updated}, $given_report->core_metadata->{updated}, 'updated is correct';
 
 };
-
 
 done_testing;
 

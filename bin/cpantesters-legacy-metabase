@@ -9,11 +9,39 @@
 
 =cut
 
+package CPANTesters::Web::Legacy::Metabase;
 use Mojo::Base '-base';
+use Mojo::File 'path';
 use Mojolicious::Lite;
 use Data::FlexSerializer;
 use Metabase::Fact;
 use Mojo::JSON qw( to_json from_json );
+use FindBin ();
+
+=head1 CONFIG
+
+The configuration file is set by the C<MOJO_CONFIG> environment
+variable, or found in the C<etc/> directory and named C<metabase.conf>
+or C<metabase.$mode.conf>. The configuration is a hashref with the
+following keys:
+
+=head2 db
+
+The C<db> hashref contains the C<dsn>, C<user>, and C<pass> to connect
+to the database.
+
+To create a database for local testing (C<-m local>), run
+C<< sqlite3 local.db < eg/legacy/schema.sql >>.
+
+=cut
+
+app->home( path( $FindBin::Bin )->dirname ) unless $ENV{MOJO_HOME};
+app->moniker( 'metabase' );
+my $mode_conf = app->home->child( sprintf 'etc/%s.%s.conf', app->moniker, app->mode );
+my $root_conf = app->home->child( sprintf 'etc/%s.conf', app->moniker );
+plugin Config => (
+    file => $ENV{MOJO_CONFIG} || ( -e $mode_conf ? $mode_conf : $root_conf ),
+);
 
 =attr dbh
 
@@ -22,7 +50,9 @@ The database handle to write reports to.
 =cut
 
 helper dbh => sub {
-    state $dbh = $_[1] if $_[1];
+    my ( $c, $new_dbh ) = @_;
+    state $dbh = DBI->connect( @{ $c->app->config->{db} }{qw( dsn user pass )} );
+    $dbh = $new_dbh if $new_dbh;
     return $dbh;
 };
 

@@ -37,10 +37,9 @@ C<< sqlite3 local.db < eg/legacy/schema.sql >>.
 
 app->home( path( $FindBin::Bin )->dirname ) unless $ENV{MOJO_HOME};
 app->moniker( 'metabase' );
-my $mode_conf = app->home->child( sprintf 'etc/%s.%s.conf', app->moniker, app->mode );
 my $root_conf = app->home->child( sprintf 'etc/%s.conf', app->moniker );
 plugin Config => (
-    file => $ENV{MOJO_CONFIG} || ( -e $mode_conf ? $mode_conf : $root_conf ),
+    file => $ENV{MOJO_CONFIG} || $root_conf,
 );
 
 =attr dbh

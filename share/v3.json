@@ -17,7 +17,7 @@
   },
   "host": "api.cpantesters.org",
   "basePath": "/v3",
-  "schemes": [ "https" ],
+  "schemes": [ "http" ],
   "consumes": [ "application/json" ],
   "produces": [ "application/json" ],
   "tags": [
@@ -44,8 +44,9 @@
           "controller": "Report",
           "action": "report"
         },
-        "openationId": "addReport",
+        "operationId": "addReport",
         "parameters": [{
+          "name": "report",
           "in": "body",
           "required": true,
           "schema": { "$ref": "#/definitions/NewReport" }
@@ -259,18 +260,9 @@
       "type": "object",
       "required": [ "reporter", "environment", "distribution" ],
       "properties": {
-        "reporter": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/Reporter" }
-        },
-        "environment": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/Environment" }
-        },
-        "distribution": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/Distribution" }
-        }
+        "reporter": { "$ref": "#/definitions/Reporter" },
+        "environment": { "$ref": "#/definitions/Environment" },
+        "distribution": { "$ref": "#/definitions/Distribution" }
       }
     },
     "Reporter": {
@@ -285,14 +277,8 @@
       "type": "object",
       "required": ["language", "system"],
       "properties": {
-        "language": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/Language" }
-        },
-        "system": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/System" }
-        },
+        "language": { "$ref": "#/definitions/Language" },
+        "system": { "$ref": "#/definitions/System" },
         "reporter": { "type": "string" },
         "toolchain": {
           "type": "object",
@@ -392,17 +378,12 @@
         "warnings": { "type": "integer", "minimum": 0 },
         "duration": { "type": "integer", "minimum": 0 },
         "comments": { "type": "string" },
-        "output": {
-          "type": "object",
-          "schema": { "$ref": "#/definitions/TestOutput" }
-        },
+        "output": { "$ref": "#/definitions/TestOutput" },
         "prerequisites": {
           "description": "A list of prerequisites",
-          "schema": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/Prerequisites"
-            }
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Prerequisite"
           }
         }
       }

@@ -98,6 +98,9 @@ sub startup ( $app ) {
     $r->websocket( '/v1/upload/dist/:dist' )->to( 'Upload#feed' );
     $r->websocket( '/v1/upload/author/:author' )->to( 'Upload#feed' );
 
+    $r->websocket( '/v3/upload' )->to( 'Upload#feed' );
+    $r->websocket( '/v3/upload/dist/:dist' )->to( 'Upload#feed' );
+    $r->websocket( '/v3/upload/author/:author' )->to( 'Upload#feed' );
 
     $app->plugin( OpenAPI => {
         url => dist_file( 'CPAN-Testers-API' => 'v1.json' ),

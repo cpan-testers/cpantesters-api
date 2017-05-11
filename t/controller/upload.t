@@ -62,13 +62,13 @@ for \my %upload ( $data{ Upload }->@* ) {
 }
 
 subtest 'all uploads' => sub {
-    $t->get_ok( '/v1/upload' )
+    $t->get_ok( '/v3/upload' )
       ->status_is( 200 )
       ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}->@[0..2] ] )
       ->or( sub { diag explain $_[0]->tx->res->json } );
 
     subtest 'since' => sub {
-        $t->get_ok( '/v1/upload?since=2016-11-19T03:05:00Z' )
+        $t->get_ok( '/v3/upload?since=2016-11-19T03:05:00Z' )
           ->status_is( 200 )
           ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}->@[1..2] ] )
           ->or( sub { diag explain $_[0]->tx->res->json } );
@@ -76,18 +76,18 @@ subtest 'all uploads' => sub {
 };
 
 subtest 'by dist' => sub {
-    $t->get_ok( '/v1/upload/dist/My-Dist' )
+    $t->get_ok( '/v3/upload/dist/My-Dist' )
       ->status_is( 200 )
       ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}->@[0,1] ] );
 
     subtest 'since' => sub {
-        $t->get_ok( '/v1/upload/dist/My-Dist?since=2016-11-19T03:05:00Z' )
+        $t->get_ok( '/v3/upload/dist/My-Dist?since=2016-11-19T03:05:00Z' )
           ->status_is( 200 )
           ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}[1] ] );
     };
 
     subtest 'dist not found' => sub {
-        $t->get_ok( '/v1/upload/dist/NOT_FOUND' )
+        $t->get_ok( '/v3/upload/dist/NOT_FOUND' )
           ->status_is( 404 )
           ->json_is( {
               errors => [ { message =>  'Distribution "NOT_FOUND" not found', 'path' => '/' } ],
@@ -96,18 +96,18 @@ subtest 'by dist' => sub {
 };
 
 subtest 'by author' => sub {
-    $t->get_ok( '/v1/upload/author/PREACTION' )
+    $t->get_ok( '/v3/upload/author/PREACTION' )
       ->status_is( 200 )
       ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}->@[0,2] ] );
 
     subtest 'since' => sub {
-        $t->get_ok( '/v1/upload/author/PREACTION?since=2016-11-19T03:05:00Z' )
+        $t->get_ok( '/v3/upload/author/PREACTION?since=2016-11-19T03:05:00Z' )
           ->status_is( 200 )
           ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Upload}[2] ] );
     };
 
     subtest 'author not found' => sub {
-        $t->get_ok( '/v1/upload/author/NOT_FOUND' )
+        $t->get_ok( '/v3/upload/author/NOT_FOUND' )
           ->status_is( 404 )
           ->json_is( {
               errors => [ { message =>  'Author "NOT_FOUND" not found', path => '/' } ],
@@ -118,7 +118,7 @@ subtest 'by author' => sub {
 subtest 'input validation' => sub {
 
     subtest '"since" must be an ISO8601 date/time' => sub {
-        $t->get_ok( '/v1/upload/dist/My-Dist?since=Sat Nov 19 14:18:40 2016' )
+        $t->get_ok( '/v3/upload/dist/My-Dist?since=Sat Nov 19 14:18:40 2016' )
           ->status_is( 400 )
           ->json_has( '/errors' )
           ->or( sub { diag explain shift->tx->res->json } );
@@ -146,13 +146,13 @@ subtest 'websocket feeds' => sub {
     my $broker_url = $broker->ua->server->nb_url;
     $t->app->config->{broker} = 'ws://' . $broker_url->host_port;
 
-    $t->websocket_ok( '/v1/upload' )
+    $t->websocket_ok( '/v3/upload' )
       ->message_ok
       ->message_is( 'Got topic: upload/dist', 'default to all uploaded dists' )
       ;
 
     my $peer = Test::Mojo->new( $t->app );
-    $peer->websocket_ok( '/v1/upload/dist/Statocles' )
+    $peer->websocket_ok( '/v3/upload/dist/Statocles' )
       ->message_ok
       ->message_is( 'Got topic: upload/dist/Statocles' )
       ->finish_ok;
@@ -162,7 +162,7 @@ subtest 'websocket feeds' => sub {
       ->finish_ok
       ;
 
-    $t->websocket_ok( '/v1/upload/author/STOP' )
+    $t->websocket_ok( '/v3/upload/author/STOP' )
       ->message_ok
       ->message_is( 'Got topic: upload/author/STOP' )
       ->finish_ok

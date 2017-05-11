@@ -44,7 +44,7 @@
           "controller": "Report",
           "action": "report"
         },
-        "operationId": "addReport",
+        "operationId": "v3_report_post",
         "parameters": [{
           "name": "report",
           "in": "body",
@@ -75,7 +75,7 @@
     "/release": {
      "get": {
        "tags": [ "Release" ],
-       "operationId": "release_all",
+       "operationId": "v3_release_all",
        "summary": "Get summary test report info about all CPAN releases",
        "x-mojo-to": {
          "controller": "Release",
@@ -100,7 +100,7 @@
     "/release/dist/{dist}": {
       "get": {
         "tags": [ "Release" ],
-        "operationId": "release_dist",
+        "operationId": "v3_release_dist",
         "summary": "Get summary test report info for releases of a distribution",
         "x-mojo-to": {
           "controller": "Release",
@@ -129,7 +129,7 @@
     "/release/author/{author}": {
       "get": {
         "tags": [ "Release" ],
-        "operationId": "release_author",
+        "operationId": "v3_release_author",
         "summary": "Get summary test report info for releases by an author",
         "x-mojo-to": {
           "controller": "Release",
@@ -158,7 +158,7 @@
     "/upload": {
       "get": {
         "tags": [ "Upload" ],
-        "operationId": "upload_all",
+        "operationId": "v3_upload_all",
         "summary": "Get all uploads to CPAN",
         "description": "This route gets uploads to CPAN. Asking for a WebSocket will subscribe to a feed of new uploads.",
         "x-mojo-to": {
@@ -187,7 +187,7 @@
     "/upload/dist/{dist}": {
       "get": {
         "tags": [ "Upload" ],
-        "operationId": "upload_dist",
+        "operationId": "v3_upload_dist",
         "summary": "Get uploads for a dist",
         "description": "This route gets uploads to CPAN for a specific distribution. Asking for a WebSocket will subscribe to a feed of new uploads.",
         "x-mojo-to": {
@@ -217,7 +217,7 @@
     "/upload/author/{author}": {
       "get": {
         "tags": [ "Upload" ],
-        "operationId": "upload_author",
+        "operationId": "v3_upload_author",
         "summary": "Get uploads for an author",
         "description": "This route gets uploads to CPAN for the specific author. Asking for a WebSocket will subscribe to a feed of new uploads.",
         "x-mojo-to": {

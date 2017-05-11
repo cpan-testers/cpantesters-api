@@ -8,11 +8,6 @@ use Mojo::File qw( path );
 use DBI;
 
 use Mojo::JSON qw( to_json );
-use Test::Reporter;
-use CPAN::Testers::Report;
-use CPAN::Testers::Fact::LegacyReport;
-use CPAN::Testers::Fact::TestSummary;
-use Data::FlexSerializer;
 
 my $SHARE_DIR = path( $Bin, '..', 'share' );
 my $bin_path = path( $Bin, '..', '..', 'bin', 'cpantesters-legacy-metabase' );
@@ -21,17 +16,8 @@ my $t = Test::Mojo->new;
 
 # App is hooked to an in-memory database by config
 # (t/etc/metabase.conf), so we must deploy a tablespace
-my $dbh = $t->app->dbh;
-$dbh->do(
-    'CREATE TABLE metabase (
-        `guid` char(36) NOT NULL,
-        `id` int(10),
-        `updated` varchar(32),
-        `report` longblob,
-        `fact` longblob,
-        PRIMARY KEY (`guid`)
-    )
-');
+my $schema = $t->app->schema;
+$schema->deploy;
 
 subtest 'post report' => sub {
     my $given_report = create_report(
@@ -49,12 +35,9 @@ subtest 'post report' => sub {
       ->header_is( Location => '/guid/' . $guid )
       ->json_is( { guid => $guid } );
 
-    my ( $row ) = $dbh->selectall_array( 'SELECT * FROM metabase', { Slice => {} } );
-    is $row->{guid}, $guid, 'guid is correct';
-
-    my $got_report = parse_report( $row );
-    is $got_report->{updated}, $given_report->core_metadata->{updated}, 'updated is correct';
-
+    my $row = $schema->resultset( 'Metabase' )->find( $guid );
+    ok $row, 'row found by guid';
+    is $row->updated, $given_report->core_metadata->{updated}, 'updated is correct';
 };
 
 done_testing;
@@ -102,34 +85,5 @@ sub create_report {
     $metabase_report->close();
 
     return $metabase_report;
-}
-
-#sub parse_report
-#
-# This sub undoes the processing that CPAN Testers expects before it is
-# put in the database so we can ensure that the report was submitted
-# correctly.
-#
-# This code is stolen from:
-#   * CPAN::Testers::Data::Generator sub load_fact
-sub parse_report {
-    my ( $row ) = @_;
-    my %report;
-
-    my $sereal_zipper = Data::FlexSerializer->new(
-        detect_compression  => 1,
-        detect_sereal       => 1,
-        output_format       => 'sereal'
-    );
-    $report{ fact } = $sereal_zipper->deserialize( $row->{fact} );
-
-    my $json_zipper = Data::FlexSerializer->new(
-        detect_compression  => 1,
-        detect_json         => 1,
-        output_format       => 'json'
-    );
-    $report{ report } = $json_zipper->deserialize( $row->{report} );
-
-    return \%report;
 }
 

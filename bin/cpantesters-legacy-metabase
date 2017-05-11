@@ -10,13 +10,16 @@
 =cut
 
 package CPANTesters::Web::Legacy::Metabase;
+use v5.24;
 use Mojo::Base '-base';
+use experimental 'signatures', 'postderef';
 use Mojo::File 'path';
 use Mojolicious::Lite;
 use Data::FlexSerializer;
 use Metabase::Fact;
 use Mojo::JSON qw( to_json from_json );
 use FindBin ();
+use CPAN::Testers::Schema;
 
 =head1 CONFIG
 
@@ -42,17 +45,18 @@ plugin Config => (
     file => $ENV{MOJO_CONFIG} || $root_conf,
 );
 
-=attr dbh
+=attr schema
 
-The database handle to write reports to.
+The schema to write reports to. Defaults to a new L<CPAN::Testers::Schema>
+object.
 
 =cut
 
-helper dbh => sub {
-    my ( $c, $new_dbh ) = @_;
-    state $dbh = DBI->connect( @{ $c->app->config->{db} }{qw( dsn user pass )} );
-    $dbh = $new_dbh if $new_dbh;
-    return $dbh;
+helper schema => sub {
+    my ( $c, $new_schema ) = @_;
+    state $schema = $new_schema || CPAN::Testers::Schema->connect( $c->app->config->{db}->@{qw( dsn user pass )} );
+    $schema = $new_schema if $new_schema;
+    return $schema;
 };
 
 =route /beta/submit/CPAN-Testers-Metabase
@@ -75,50 +79,11 @@ are updated to submit reports via the new API (so, forever).
 sub handle_post {
     my ( $c ) = @_;
     my $body = $c->req->json;
-
-    ### Transform it for the current local Metabase
-    # Thaw the Metabase report
-    my $report = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
-        ->from_struct( $body );
-
-    my $guid = $report->core_metadata->{guid};
-    my $updated = $report->core_metadata->{update_time};
-
-    # Encode it to JSON
-    my %facts;
-    for my $fact ( $report->facts ) {
-        my $name = ref $fact;
-        $facts{ $name } = $fact->as_struct;
-        $facts{ $name }{ content } = from_json( $facts{ $name }{ content } );
-    }
-
-    # Serialize it to compress it using Data::FlexSerializer
-    # "report" gets serialized with JSON
-    my $json_zipper = Data::FlexSerializer->new(
-        detect_compression  => 1,
-        detect_json         => 1,
-        output_format       => 'json'
-    );
-    my $report_zip = $json_zipper->serialize( \%facts );
-
-    # "fact" gets serialized with Sereal
-    my $sereal_zipper = Data::FlexSerializer->new(
-        detect_compression  => 1,
-        detect_sereal       => 1,
-        output_format       => 'sereal'
-    );
-    my $fact_zip = $sereal_zipper->serialize( $report );
-
-    $c->app->dbh->do(
-        'INSERT INTO metabase (guid,updated,report,fact) VALUES (?,?,?,?)',
-        {},
-        $guid, $updated, $report_zip, $fact_zip,
-    );
-
-    $c->res->headers->location( '/guid/' . $guid );
+    my $row = $c->schema->resultset( 'Report' )->insert_metabase_data( $body );
+    $c->res->headers->location( '/guid/' . $row->guid );
     return $c->render(
         status => 201,
-        json => { guid => $guid },
+        json => { guid => $row->guid },
     );
 };
 

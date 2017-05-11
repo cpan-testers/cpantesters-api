@@ -100,7 +100,11 @@ sub startup ( $app ) {
 
 
     $app->plugin( OpenAPI => {
-        url => dist_file( 'CPAN-Testers-API' => 'api.json' ),
+        url => dist_file( 'CPAN-Testers-API' => 'v1.json' ),
+        allow_invalid_ref => 1,
+    } );
+    $app->plugin( OpenAPI => {
+        url => dist_file( 'CPAN-Testers-API' => 'v3.json' ),
         allow_invalid_ref => 1,
     } );
     $app->helper( schema => sub { shift->app->schema } );

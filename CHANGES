@@ -6,6 +6,7 @@ Changelog for CPAN-Testers-API
 
     - Upgraded Mojolicious::Plugin::OpenAPI to 1.13 to fix deprecations
       due to Mojo::File
+    - Fixed API website links to point to /v3 API endpointes
 
 0.007     2017-05-12 10:35:47+02:00 Europe/Paris
 

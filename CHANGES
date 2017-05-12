@@ -2,6 +2,11 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - Added v3 API spec with posting of incoming test reports. Thanks
+      @garu! [Github #5]
+
 0.006     2016-12-27 20:05:59-06:00 America/Chicago
 
     [Fixed]

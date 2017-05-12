@@ -45,4 +45,39 @@ sub report_post( $c ) {
     );
 }
 
+=method report_get
+
+    ### Requests:
+    GET /v3/report/:guid
+
+    ### Response
+    200 OK
+    { "id": "...", ... }
+
+Get a single CPAN Testers report from the database.
+
+=cut
+
+sub report_get( $c ) {
+    $c->openapi->valid_input or return;
+    my $id = $c->validation->param( 'id' );
+    my $row = $c->schema->resultset( 'TestReport' )->find( $id );
+    if ( !$row ) {
+        return $c->render(
+            status => 404,
+            openapi => {
+                errors => [
+                    {
+                        message => 'Report ID not found',
+                        path => '/id',
+                    },
+                ],
+            },
+        );
+    }
+    return $c->render(
+        openapi => $row->report,
+    );
+}
+
 1;

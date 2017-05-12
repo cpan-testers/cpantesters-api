@@ -25,6 +25,27 @@ sub _test_api( $base ) {
           ->json_like( '/id' => qr{${HEX}{8}-${HEX}{4}-${HEX}{4}-${HEX}{4}-${HEX}{12}} )
           ;
     };
+
+    subtest 'get report' => sub {
+        my $row = $t->app->schema->resultset( 'TestReport' )->first;
+        $t->get_ok( $base . '/report/' . $row->id )
+          ->status_is( 200 )
+          ->or( sub { diag shift->tx->res->body } )
+          ->json_is( $row->report );
+
+        subtest 'error: report not found' => sub {
+            $t->get_ok( $base . '/report/XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX' )
+              ->status_is( 404 )
+              ->json_is({
+                    errors => [
+                        {
+                            message => 'Report ID not found',
+                            path => '/id',
+                        },
+                    ],
+                });
+        };
+    };
 }
 
 done_testing;

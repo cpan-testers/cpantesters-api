@@ -468,12 +468,20 @@
         "id": { "type": "string" }
       }
     },
+
     "Error": {
-      "type": "object",
-      "required": ["code", "message"],
+      "title": "OpenAPI Error Object",
       "properties": {
-        "code":    { "type": "integer", "format": "int32" },
-        "message": { "type": "string" }
+        "errors": {
+          "type": "array",
+          "items": {
+            "required": ["message"],
+            "properties": {
+              "message": { "type": "string", "description": "Human readable description of the error" },
+              "path": { "type": "string", "description": "JSON pointer to the input data where the error occur" }
+            }
+          }
+        }
       }
     },
 

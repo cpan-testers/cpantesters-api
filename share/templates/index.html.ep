@@ -61,6 +61,7 @@
             href="https://github.com/cpan-testers/cpantesters-api/blob/master/eg/feed.pl">an
             example WebSocket subscriber using Mojo::UserAgent</a>).</li>
             <li><a href="/docs/?url=/v3#!/Report/v3_report_post">Posting new test reports</a></li>
+            <li><a href="/docs/?url=/v3#!/Report/v3_report_get">Getting individual test reports by ID</a></li>
             </ul>
 
             <p>Future data that can be made available by this API include:</p>

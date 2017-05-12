@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.007     2017-05-12 10:35:47+02:00 Europe/Paris
+
     [Added]
 
     - Added v3 API spec with posting of incoming test reports. Thanks

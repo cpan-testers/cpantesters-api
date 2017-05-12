@@ -2,6 +2,11 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Upgraded Mojolicious::Plugin::OpenAPI to 1.13 to fix deprecations
+      due to Mojo::File
+
 0.007     2017-05-12 10:35:47+02:00 Europe/Paris
 
     [Added]

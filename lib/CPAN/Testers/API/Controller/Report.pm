@@ -15,8 +15,6 @@ L<CPAN::Testers::Schema::Result::TestReport>, L<Mojolicious::Controller>
 
 use Mojo::Base 'Mojolicious::Controller';
 use CPAN::Testers::API::Base;
-use Mojo::JSON qw( encode_json );
-use Data::UUID;
 
 =method report_post
 
@@ -36,15 +34,13 @@ finished running a test.
 sub report_post( $c ) {
     $c->openapi->valid_input or return;
     my $report = $c->validation->param( 'report' );
-    $report->{id} = Data::UUID->new->create_str();
-    $c->schema->resultset( 'TestReport' )->create( {
-        id => $report->{id},
-        report => encode_json( $report ),
+    my $row = $c->schema->resultset( 'TestReport' )->create( {
+        report => $report,
     } );
     return $c->render(
         status => 201,
         openapi => {
-            id => $report->{id},
+            id => $row->id,
         },
     );
 }

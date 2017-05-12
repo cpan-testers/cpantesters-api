@@ -24,7 +24,7 @@
       "hostname": "bebop",
       "cpu_count": "1 [2 cores]",
       "cpu_type": "Intel Core i5",
-      "cpu_description": ""MacBook Air (1.3 GHz)",
+      "cpu_description": "MacBook Air (1.3 GHz)",
       "filesystem": "hfs",
       "variables": {
           "PERLDOC_PAGER": "less",

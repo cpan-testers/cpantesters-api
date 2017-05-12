@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.006
+version 0.007
 
 # STATUS
 
@@ -100,6 +100,10 @@ broker is used to forward messages to every connected user.
 # AUTHOR
 
 Doug Bell <preaction@cpan.org>
+
+# CONTRIBUTOR
+
+Breno G. de Oliveira <garu@cpan.org>
 
 # COPYRIGHT AND LICENSE
 

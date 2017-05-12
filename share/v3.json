@@ -42,7 +42,7 @@
         "description": "Submit a new report to CPAN Testers",
         "x-mojo-to": {
           "controller": "Report",
-          "action": "report"
+          "action": "report_post"
         },
         "operationId": "v3_report_post",
         "parameters": [{
@@ -411,13 +411,10 @@
     },
     "AcceptedReports": {
       "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "required": ["status"],
-        "properties": {
-          "status": { "type": "string" },
-          "id": { "type": "string" }
-        }
+      "required": ["id"],
+      "properties": {
+        "status": { "type": "string" },
+        "id": { "type": "string" }
       }
     },
     "Error": {

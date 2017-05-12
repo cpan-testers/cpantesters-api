@@ -33,8 +33,7 @@
       "runtime" : {
          "requires" : {
             "Alien::SwaggerUI" : "0",
-            "CPAN::Testers::Schema" : "0.006",
-            "Data::UUID" : "0",
+            "CPAN::Testers::Schema" : "0.007",
             "File::Share" : "0",
             "Import::Base" : "0.012",
             "Log::Any" : "1.045",
@@ -42,7 +41,7 @@
             "Mercury" : "0.010",
             "Mojolicious" : "7.24",
             "Mojolicious::Plugin::Config" : "0",
-            "Mojolicious::Plugin::OpenAPI" : "0",
+            "Mojolicious::Plugin::OpenAPI" : "1.13",
             "perl" : "5.024"
          }
       },
@@ -64,23 +63,23 @@
    "provides" : {
       "CPAN::Testers::API" : {
          "file" : "lib/CPAN/Testers/API.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "CPAN::Testers::API::Base" : {
          "file" : "lib/CPAN/Testers/API/Base.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "CPAN::Testers::API::Controller::Release" : {
          "file" : "lib/CPAN/Testers/API/Controller/Release.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "CPAN::Testers::API::Controller::Report" : {
          "file" : "lib/CPAN/Testers/API/Controller/Report.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       },
       "CPAN::Testers::API::Controller::Upload" : {
          "file" : "lib/CPAN/Testers/API/Controller/Upload.pm",
-         "version" : "0.007"
+         "version" : "0.008"
       }
    },
    "release_status" : "stable",
@@ -96,7 +95,7 @@
       },
       "x_IRC" : "irc://irc.perl.org/#cpantesters-discuss"
    },
-   "version" : "0.007",
+   "version" : "0.008",
    "x_authority" : "cpan:PREACTION",
    "x_contributors" : [
       "Breno G. de Oliveira <garu@cpan.org>"

@@ -1,6 +1,5 @@
 requires "Alien::SwaggerUI" => "0";
-requires "CPAN::Testers::Schema" => "0.006";
-requires "Data::UUID" => "0";
+requires "CPAN::Testers::Schema" => "0.007";
 requires "File::Share" => "0";
 requires "Import::Base" => "0.012";
 requires "Log::Any" => "1.045";
@@ -8,7 +7,7 @@ requires "Log::Any::Adapter::MojoLog" => "0.02";
 requires "Mercury" => "0.010";
 requires "Mojolicious" => "7.24";
 requires "Mojolicious::Plugin::Config" => "0";
-requires "Mojolicious::Plugin::OpenAPI" => "0";
+requires "Mojolicious::Plugin::OpenAPI" => "1.13";
 requires "perl" => "5.024";
 
 on 'test' => sub {

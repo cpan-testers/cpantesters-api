@@ -2,11 +2,20 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - Added single test report get API. This works for new-style reports
+      only. We will be migrating old-style reports to the new-style
+      format soon. Old-style reports will maintain their former ID, so
+      everything should work fine.
+
     [Fixed]
 
     - Upgraded Mojolicious::Plugin::OpenAPI to 1.13 to fix deprecations
       due to Mojo::File
     - Fixed API website links to point to /v3 API endpointes
+    - Fixed test report post to use new schema with auto-serialization.
+      This makes our database more consistent.
 
 0.007     2017-05-12 10:35:47+02:00 Europe/Paris
 

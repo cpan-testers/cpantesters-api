@@ -303,10 +303,9 @@
       }
     },
     "Report": {
-      "type": "object",
       "description": "CPAN Testers report",
       "allOf": [
-        { "$ref": "#!/definitions/NewReport" },
+        { "$ref": "#/definitions/NewReport" },
         {
           "type": "object",
           "required": ["id"],

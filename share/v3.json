@@ -56,6 +56,10 @@
             "description": "report was created",
             "schema": { "$ref": "#/definitions/AcceptedReports" }
           },
+          "303": {
+            "description": "duplicate report",
+            "schema": { "$ref": "#/definitions/Error" }
+          },
           "401": {
             "description": "invalid credentials",
             "schema": { "$ref": "#/definitions/Error" }
@@ -66,6 +70,39 @@
           },
           "default": {
             "description": "unexpected error",
+            "schema": { "$ref": "#/definitions/Error" }
+          }
+        }
+      }
+    },
+
+    "/report/{id}": {
+      "get": {
+        "tags": ["Report"],
+        "description": "Fetch report data from CPAN Testers",
+        "x-mojo-to": {
+          "controller": "Report",
+          "action": "report_get"
+        },
+        "operationId": "v3_report_get",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "The CPAN Testers report id (like 01be7be2-2aec-11e7-a074-e1beba07c9dd)",
+          "type": "string",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Report details",
+            "schema": { "$ref": "#/definitions/Report" }
+          },
+          "400": {
+            "description": "report id is invalid",
+            "schema": { "$ref": "#/definitions/Error" }
+          },
+          "404": {
+            "description": "The specified report was not found",
             "schema": { "$ref": "#/definitions/Error" }
           }
         }
@@ -264,6 +301,21 @@
         "environment": { "$ref": "#/definitions/Environment" },
         "distribution": { "$ref": "#/definitions/Distribution" }
       }
+    },
+    "Report": {
+      "type": "object",
+      "description": "CPAN Testers report",
+      "allOf": [
+        { "$ref": "#!/definitions/NewReport" },
+        {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+              "id": { "type": "string" },
+              "created": { "type": "string" }
+          }
+        }
+      ]
     },
     "Reporter": {
       "type": "object",

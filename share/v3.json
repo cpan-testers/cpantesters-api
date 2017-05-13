@@ -413,7 +413,7 @@
       "properties": {
         "grade": {
           "type": "string",
-          "enum": ["PASS", "FAIL", "NA", "UNKNOWN"]
+          "enum": ["pass", "fail", "na", "unknown"]
         },
         "tests":    { "type": "integer", "minimum": 0 },
         "failures": { "type": "integer", "minimum": 0 },

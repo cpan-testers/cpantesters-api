@@ -33,7 +33,7 @@
     }
   },
   "result": {
-    "grade": "PASS",
+    "grade": "pass",
     "comments": "This is a static push of a valid report so we can test the new CPAN Testers API",
     "tests": 453,
     "failures": 0,

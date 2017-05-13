@@ -34,6 +34,7 @@ finished running a test.
 sub report_post( $c ) {
     $c->openapi->valid_input or return;
     my $report = $c->validation->param( 'report' );
+    $c->app->log->debug( 'Submitting Report: ' . $c->req->body );
     my $row = $c->schema->resultset( 'TestReport' )->create( {
         report => $report,
     } );

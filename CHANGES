@@ -2,6 +2,13 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Changed test report format to move the test result into its own
+      top-level "result" object. This makes it easier to see what
+      information is about the test results and what information is
+      about the code distribution.
+
 0.008     2017-05-12 18:21:59+02:00 Europe/Paris
 
     [Added]

@@ -65,5 +65,5 @@
         { "phase": "requires", "name": "File::Temp",      "need": "0",    "have": "0.2304"   },
         { "phase": "requires", "name": "Fcntl",           "need": "0",    "have": "1.13"     }
     ]
-  },
+  }
 }

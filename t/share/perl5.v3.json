@@ -4,7 +4,7 @@
     "email": "garu@cpan.org"
   },
   "environment": {
-    "reporter": "rawsender 1.0",
+    "user_agent": "rawsender 1.0",
     "language": {
       "name": "Perl 5",
       "version": "5.24.1",

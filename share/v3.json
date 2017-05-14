@@ -332,7 +332,7 @@
       "properties": {
         "language": { "$ref": "#/definitions/Language" },
         "system": { "$ref": "#/definitions/System" },
-        "reporter": { "type": "string" },
+        "user_agent": { "type": "string" },
         "toolchain": {
           "type": "object",
           "additionalProperties": { "type": "string" }

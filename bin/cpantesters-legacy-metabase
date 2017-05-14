@@ -12,14 +12,16 @@
 package CPANTesters::Web::Legacy::Metabase;
 use v5.24;
 use Mojo::Base '-base';
-use experimental 'signatures', 'postderef';
 use Mojo::File 'path';
 use Mojolicious::Lite;
-use Data::FlexSerializer;
+use experimental 'signatures', 'postderef';
 use Metabase::Fact;
-use Mojo::JSON qw( to_json from_json );
+use Metabase::User::Profile;
+use Metabase::User::Secret;
+use CPAN::Testers::Report;
 use FindBin ();
 use CPAN::Testers::Schema;
+use Mojo::Util qw( b64_decode );
 
 =head1 CONFIG
 
@@ -33,8 +35,8 @@ following keys:
 The C<db> hashref contains the C<dsn>, C<user>, and C<pass> to connect
 to the database.
 
-To create a database for local testing (C<-m local>), run
-C<< sqlite3 local.db < eg/legacy/schema.sql >>.
+To create a database for local testing (C<-m local>), install the latest
+CPAN Testers schema using: C<< cpantesters-schema install dbi:SQLite:local.db >>.
 
 =cut
 
@@ -54,7 +56,7 @@ object.
 
 helper schema => sub {
     my ( $c, $new_schema ) = @_;
-    state $schema = $new_schema || CPAN::Testers::Schema->connect( $c->app->config->{db}->@{qw( dsn user pass )} );
+    state $schema = $new_schema || CPAN::Testers::Schema->connect( $c->app->config->{db}->@{qw( dsn user pass args )} );
     $schema = $new_schema if $new_schema;
     return $schema;
 };
@@ -78,16 +80,113 @@ are updated to submit reports via the new API (so, forever).
 
 sub handle_post {
     my ( $c ) = @_;
+    $c->app->log->debug( "Got: " . $c->req->body );
+
+    # Validate the user
+    my ( undef, $auth ) = split / /, $c->req->headers->authorization;
+    my ( $guid, $secret ) = split /:/, b64_decode( $auth );
+    my $user = $c->schema->resultset( 'MetabaseUser' )->search( { resource => 'metabase:user:' . $guid } )->single;
+    if ( !$user ) {
+        $c->app->log->info( 'Unregistered user ' . $guid );
+        return $c->render(
+            status => 401,
+            json => {
+                error => 'User ' . $guid . ' unrecognized',
+            },
+        );
+    }
+
     my $body = $c->req->json;
-    my $row = $c->schema->resultset( 'Report' )->insert_metabase_data( $body );
-    $c->res->headers->location( '/guid/' . $row->guid );
+    my $fact = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
+        ->from_struct( $body );
+    my $row = $c->schema->resultset( 'TestReport' )->insert_metabase_fact( $fact );
+
+    my $url = $c->req->url->clone;
+    my $path = $url->path;
+    splice $path->@*, -2, 2, 'guid', $row->id;
+    $c->res->headers->location( $url );
+
     return $c->render(
         status => 201,
-        json => { guid => $row->guid },
+        json => { guid => $row->id },
     );
 };
 
-post '/api/v1/submit/CPAN-Testers-Metabase' => \&handle_post;
-post '/beta/submit/CPAN-Testers-Metabase' => \&handle_post;
+post '/api/v1/submit/CPAN-Testers-Report' => \&handle_post;
+post '/beta/submit/CPAN-Testers-Report' => \&handle_post;
+
+=route /api/v1/register
+
+=route /beta/register
+
+Register a new Metabase user. This does not appear to be used by any
+CPAN Testers reporter client, but if it is, we can add the user to the
+C<metabase_user> table (the
+L<CPAN::Testers::Schema::Result::MetabaseUser> result class).
+
+=cut
+
+sub handle_register( $c ) {
+    $c->app->log->debug( $c->req->body );
+    my @things = ref $c->req->json eq 'ARRAY' ? $c->req->json->@* : ( $c->req->json );
+    for my $body ( @things ) {
+        my $fact = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
+            ->from_struct( $body );
+
+        my ( $fullname ) = grep { $_->isa( 'Metabase::User::FullName' ) } $fact->content->@*;
+        my ( $email ) = grep { $_->isa( 'Metabase::User::EmailAddress' ) } $fact->content->@*;
+
+        my $row = $c->schema->resultset( 'MetabaseUser' )->update_or_create({
+            resource => $fact->resource,
+            fullname => $fullname->content,
+            email => $email->content,
+        });
+    }
+
+    return $c->render(
+        status => 200,
+        json => { message => 'accepted' },
+    );
+}
+
+post '/api/v1/register' => \&handle_register;
+post '/beta/register' => \&handle_register;
+
+=route /api/v1/guid/:guid
+
+=route /beta/guid/:guid
+
+This is necessary during the registration as a pre-flight check before
+submitting the user registration, for some reason...
+
+=cut
+
+sub handle_guid( $c ) {
+    my $guid = $c->stash( 'guid' );
+    my $user = $c->schema->resultset( 'MetabaseUser' )->search( { resource => 'metabase:user:' . $guid } )->single;
+    if ( !$user ) {
+        $c->app->log->info( 'Unregistered user ' . $guid );
+        return $c->render(
+            status => 404,
+            json => {
+                error => $guid . ' not found',
+            },
+        );
+    }
+};
+
+get '/api/v1/guid/:guid' => \&handle_guid;
+get '/beta/guid/:guid' => \&handle_guid;
+
+=route /tail/log.txt
+
+See a log of the last view CPAN Testers reports.
+
+=cut
+
+get '/tail/log.txt' => sub( $c ) {
+    # The last 1000 reports as of 2017-05-13T13:10:11Z:
+    # [2017-05-13T13:10:09Z] [Slaven Rezi&#x0107; (SREZIC)] [fail] [VOJ/Pod-Pandoc-0.4.0.tar.gz] [x86_64-linux] [perl-v5.24.1] [7db6b504-37dd-11e7-bc91-bebec21a40f2] [2017-05-13T13:10:09Z]
+};
 
 app->start;

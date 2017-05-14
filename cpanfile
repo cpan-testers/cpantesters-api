@@ -9,6 +9,7 @@ requires "Mojolicious" => "7.24";
 requires "Mojolicious::Plugin::Config" => "0";
 requires "Mojolicious::Plugin::OpenAPI" => "1.13";
 requires "perl" => "5.024";
+recommends "Data::FlexSerializer" => "0";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
@@ -22,6 +23,12 @@ on 'test' => sub {
 
 on 'test' => sub {
   recommends "CPAN::Meta" => "2.120900";
+  recommends "CPAN::Testers::Fact::LegacyReport" => "0";
+  recommends "CPAN::Testers::Fact::TestSummary" => "0";
+  recommends "CPAN::Testers::Report" => "0";
+  recommends "DBD::SQLite" => "0";
+  recommends "Test::Reporter" => "0";
+  recommends "Test::Reporter::Transport::Null" => "0";
 };
 
 on 'configure' => sub {

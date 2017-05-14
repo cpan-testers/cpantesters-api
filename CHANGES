@@ -2,6 +2,12 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Added]
+
+    - Added Metabase shim API for old-style CPAN Testers clients. These
+      clients will now produce new-style reports that will be processed
+      new ways.
+
 0.010     2017-05-14 10:32:18+02:00 Europe/Paris
 
     [Fixed]

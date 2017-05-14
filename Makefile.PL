@@ -21,7 +21,8 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "CPAN-Testers-API",
   "EXE_FILES" => [
-    "bin/cpantesters-api"
+    "bin/cpantesters-api",
+    "bin/cpantesters-legacy-metabase"
   ],
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.024",
@@ -49,7 +50,7 @@ my %WriteMakefileArgs = (
   },
   "VERSION" => "0.011",
   "test" => {
-    "TESTS" => "t/*.t t/controller/*.t"
+    "TESTS" => "t/*.t t/controller/*.t t/legacy/*.t"
   }
 );
 

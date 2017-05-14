@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.010     2017-05-14 10:32:18+02:00 Europe/Paris
+
     [Fixed]
 
     - Changed the "reporter" field which defined the reporter agent name

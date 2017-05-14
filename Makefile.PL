@@ -28,7 +28,7 @@ my %WriteMakefileArgs = (
   "NAME" => "CPAN::Testers::API",
   "PREREQ_PM" => {
     "Alien::SwaggerUI" => 0,
-    "CPAN::Testers::Schema" => "0.007",
+    "CPAN::Testers::Schema" => "0.010",
     "File::Share" => 0,
     "Import::Base" => "0.012",
     "Log::Any" => "1.045",
@@ -56,7 +56,7 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Alien::SwaggerUI" => 0,
-  "CPAN::Testers::Schema" => "0.007",
+  "CPAN::Testers::Schema" => "0.010",
   "ExtUtils::MakeMaker" => 0,
   "File::Share" => 0,
   "File::Spec" => 0,

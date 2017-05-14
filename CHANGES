@@ -2,6 +2,16 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Changed the "reporter" field which defined the reporter agent name
+      to "user_agent" to capitalize on the connotation with HTTP user
+      agents.
+
+    - Added some logging for report posts. There's a strange validation
+      error being returned that we're trying to track down, but also
+      it'd be nice just to have this for future diagnostics.
+
 0.009     2017-05-13 14:44:49+02:00 Europe/Paris
 
     [Fixed]

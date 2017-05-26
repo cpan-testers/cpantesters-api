@@ -83,6 +83,15 @@ sub startup ( $app ) {
         default => { }, # Allow living without config file
     } );
 
+    # Allow CORS for everyone
+    $app->hook( after_build_tx => sub {
+        my ( $tx, $app ) = @_;
+        $tx->res->headers->header( 'Access-Control-Allow-Origin' => '*' );
+        $tx->res->headers->header( 'Access-Control-Allow-Methods' => 'GET, POST, PUT, PATCH, DELETE, OPTIONS' );
+        $tx->res->headers->header( 'Access-Control-Max-Age' => 3600 );
+        $tx->res->headers->header( 'Access-Control-Allow-Headers' => 'Content-Type, X-Requested-With' );
+    } );
+
     my $r = $app->routes;
     $r->get( '/' => 'index' );
     $r->get( '/docs/*path' => { path => 'index.html' } )->to(

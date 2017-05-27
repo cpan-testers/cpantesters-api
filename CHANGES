@@ -5,6 +5,7 @@ Changelog for CPAN-Testers-API
     [Added]
 
     - Added deploy script for legacy metabase API
+    - Added explanatory website for legacy metabae API
 
     [Fixed]
 
@@ -12,6 +13,7 @@ Changelog for CPAN-Testers-API
     - Refactored deploy script to have less duplication
     - Allow cross-origin requests from any domain so you can build your
       own API consumers using simple JavaScript in the browser
+    - Reduced body margin on API website
 
 0.011     2017-05-14 15:59:49+02:00 Europe/Paris
 

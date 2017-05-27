@@ -104,6 +104,55 @@ subtest 'post report' => sub {
         is $row->report->{environment}{language}{archname}, 'x86_64-linux',
             'language arch is correct';
     };
+
+    subtest 'tail/log.txt' => sub {
+
+        my $upload = $schema->resultset( 'Upload' )->create({
+            type => 'cpan',
+            dist => 'CPAN-Testers-Schema',
+            version => '1.001',
+            author => 'PREACTION',
+            filename => 'CPAN-Testers-Schema-1.001.tar.gz',
+            released => time,
+        });
+
+        my %date = (
+            year => 2017,
+            month => 1,
+            day => 1,
+            hour => 0,
+            minute => 0,
+            second => 0
+        );
+        my $row = $schema->resultset( 'TestReport' )->create({
+            created => DateTime->new( %date ),
+            report => {
+                reporter => {
+                    name => 'Doug Bell',
+                },
+                environment => {
+                    language => {
+                        name => 'Perl 5',
+                        version => '5.24.0',
+                        archname => 'x86_64-linux',
+                    },
+                },
+                distribution => {
+                    name => 'CPAN-Testers-Schema',
+                    version => '1.001',
+                },
+                result => {
+                    grade => 'pass',
+                },
+            },
+        });
+        my $guid = $row->id;
+
+        $t->get_ok( '/tail/log.txt' )
+          ->content_like( qr{The last \d+ reports as of \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z:} )
+          ->content_like( qr{\Q[2017-01-01T00:00:00Z] [Doug Bell] [pass] [PREACTION/CPAN-Testers-Schema-1.001.tar.gz] [x86_64-linux] [perl-v5.24.0] [$guid] [2017-01-01T00:00:00Z]} )
+          ;
+    };
 };
 
 done_testing;

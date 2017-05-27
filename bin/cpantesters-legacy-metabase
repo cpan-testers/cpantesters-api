@@ -187,9 +187,9 @@ See a log of the last view CPAN Testers reports.
 
 =cut
 
-get '/tail/log.txt' => sub( $c ) {
-    # The last 1000 reports as of 2017-05-13T13:10:11Z:
-    # [2017-05-13T13:10:09Z] [Slaven Rezi&#x0107; (SREZIC)] [fail] [VOJ/Pod-Pandoc-0.4.0.tar.gz] [x86_64-linux] [perl-v5.24.1] [7db6b504-37dd-11e7-bc91-bebec21a40f2] [2017-05-13T13:10:09Z]
+get '/tail/log' => sub( $c ) {
+    my $rs = $c->schema->resultset( 'TestReport' )->search( {}, { order_by => { -desc => 'created' }, rows => 1000 } );
+    return $c->render( 'tail/log', format => 'txt', rs => $rs );
 };
 
 app->start;
@@ -239,3 +239,17 @@ __DATA__
     to the new test report format. Metabase clients will continue to work, but will not gain the
     benefit of the new test report's additional data fields.</p>
 </div>
+
+@@ tail/log.txt.ep
+% use DateTime;
+% my $rs = stash 'rs';
+The last <%= $rs->count %> reports as of <%= DateTime->now %>Z:
+% for my $row ( $rs->all ) {
+% my $report = $row->report;
+% my $grade = $report->{result}{grade};
+% my $name = $report->{reporter}{name};
+% my $upload = $row->upload;
+% my $file = $upload ? join "/", $upload->author, $upload->filename : '';
+% my ( $arch, $perl_version ) = $report->{environment}{language}->@{qw(archname version )};
+[<%= $row->created %>Z] [<%= $name %>] [<%= $grade %>] [<%= $file %>] [<%= $arch %>] [perl-v<%= $perl_version %>] [<%= $row->id %>] [<%= $row->created %>Z]
+% }

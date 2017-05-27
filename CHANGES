@@ -2,6 +2,12 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed Perl 6 reports showing up in the legacy metabase API log
+    - Fixed an additional "v" showing up in the Perl version in the
+      legacy metabase API log
+
 0.012     2017-05-26 23:54:48-05:00 America/Chicago
 
     [Added]

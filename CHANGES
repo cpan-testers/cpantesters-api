@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.014     2017-05-27 01:43:31-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed test failing if missing optional prerequisite

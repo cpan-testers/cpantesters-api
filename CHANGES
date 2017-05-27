@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.013     2017-05-27 01:32:28-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed Perl 6 reports showing up in the legacy metabase API log

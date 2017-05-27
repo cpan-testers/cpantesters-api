@@ -12,7 +12,7 @@ use CPAN::Testers::Fact::TestSummary;
 use CPAN::Testers::Fact::LegacyReport;
 use Metabase::User::Profile;
 use Mojo::Util qw( b64_encode );
-use Test::mysqld;
+eval { require Test::mysqld } or plan skip_all => 'Requires Test::mysqld';
 
 my $mysqld = Test::mysqld->new(
     my_cnf => {

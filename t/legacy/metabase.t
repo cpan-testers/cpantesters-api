@@ -1,6 +1,7 @@
 
 use Mojo::Base '-strict';
 use experimental 'signatures', 'postderef';
+no warnings 'once';
 use Test::More;
 use Test::Mojo;
 use FindBin qw( $Bin );

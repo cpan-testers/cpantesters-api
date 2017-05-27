@@ -36,7 +36,8 @@
          },
          "requires" : {
             "Alien::SwaggerUI" : "0",
-            "CPAN::Testers::Schema" : "0.010",
+            "CPAN::Testers::Schema" : "0.013",
+            "DateTime" : "0",
             "File::Share" : "0",
             "Import::Base" : "0.012",
             "Log::Any" : "1.045",
@@ -72,23 +73,23 @@
    "provides" : {
       "CPAN::Testers::API" : {
          "file" : "lib/CPAN/Testers/API.pm",
-         "version" : "0.011"
+         "version" : "0.012"
       },
       "CPAN::Testers::API::Base" : {
          "file" : "lib/CPAN/Testers/API/Base.pm",
-         "version" : "0.011"
+         "version" : "0.012"
       },
       "CPAN::Testers::API::Controller::Release" : {
          "file" : "lib/CPAN/Testers/API/Controller/Release.pm",
-         "version" : "0.011"
+         "version" : "0.012"
       },
       "CPAN::Testers::API::Controller::Report" : {
          "file" : "lib/CPAN/Testers/API/Controller/Report.pm",
-         "version" : "0.011"
+         "version" : "0.012"
       },
       "CPAN::Testers::API::Controller::Upload" : {
          "file" : "lib/CPAN/Testers/API/Controller/Upload.pm",
-         "version" : "0.011"
+         "version" : "0.012"
       }
    },
    "release_status" : "stable",
@@ -104,7 +105,7 @@
       },
       "x_IRC" : "irc://irc.perl.org/#cpantesters-discuss"
    },
-   "version" : "0.011",
+   "version" : "0.012",
    "x_authority" : "cpan:PREACTION",
    "x_contributors" : [
       "Breno G. de Oliveira <garu@cpan.org>"

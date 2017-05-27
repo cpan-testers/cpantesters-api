@@ -1,5 +1,6 @@
 requires "Alien::SwaggerUI" => "0";
-requires "CPAN::Testers::Schema" => "0.010";
+requires "CPAN::Testers::Schema" => "0.013";
+requires "DateTime" => "0";
 requires "File::Share" => "0";
 requires "Import::Base" => "0.012";
 requires "Log::Any" => "1.045";

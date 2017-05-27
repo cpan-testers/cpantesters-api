@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.012     2017-05-26 23:54:48-05:00 America/Chicago
+
     [Added]
 
     - Added deploy script for legacy metabase API

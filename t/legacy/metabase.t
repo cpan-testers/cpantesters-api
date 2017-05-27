@@ -142,7 +142,7 @@ subtest 'post report' => sub {
                 environment => {
                     language => {
                         name => 'Perl 5',
-                        version => '5.24.0',
+                        version => 'v5.24.0',
                         archname => 'x86_64-linux',
                     },
                 },

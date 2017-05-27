@@ -65,7 +65,7 @@ desc "Deploy the CPAN Testers API from CPAN";
 task deploy =>
     group => 'api',
     sub {
-        run 'source ~/.profile; cpanm CPAN::Testers::API DBD::mysql';
+        run 'source ~/.profile; cpanm --with-recommends CPAN::Testers::API DBD::mysql';
         run_task 'deploy_service', on => connection->server;
         run_task 'restart', on => connection->server;
     };
@@ -98,7 +98,7 @@ task deploy_dev =>
             source => $dist;
 
         Rex::Logger::info( 'Installing ' . $dist );
-        run 'source ~/.profile; cpanm -v ~/dist/' . $dist;
+        run 'source ~/.profile; cpanm -v --with-recommends ~/dist/' . $dist;
         if ( $? ) {
             say last_command_output;
         }

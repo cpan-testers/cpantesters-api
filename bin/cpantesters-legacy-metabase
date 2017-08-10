@@ -192,7 +192,8 @@ get '/tail/log' => sub( $c ) {
         { 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
         { order_by => { -desc => 'created' }, rows => 1000 },
     );
-    return $c->render( 'tail/log', format => 'txt', rs => $rs );
+    my @reports = $rs->all;
+    return $c->render( 'tail/log', format => 'txt', reports => \@reports );
 };
 
 app->start;
@@ -244,10 +245,11 @@ __DATA__
 </div>
 
 @@ tail/log.txt.ep
+% use v5.24;
 % use DateTime;
-% my $rs = stash 'rs';
-The last <%= $rs->count %> reports as of <%= DateTime->now %>Z:
-% for my $row ( $rs->all ) {
+% my @reports = stash( 'reports' )->@*;
+The last <%= scalar @reports %> reports as of <%= DateTime->now %>Z:
+% for my $row ( @reports ) {
 % my $report = $row->report;
 % my $grade = $report->{result}{grade};
 % my $name = $report->{reporter}{name};

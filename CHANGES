@@ -2,6 +2,11 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Prevented legacy metabase from fetching the latest 1000 reports
+      twice or from using a `COUNT(*)` query on InnoDB.
+
 0.015     2017-06-21 01:16:47-04:00 America/New_York
 
     [Added]

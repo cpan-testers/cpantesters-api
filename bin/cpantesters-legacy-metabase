@@ -83,7 +83,7 @@ are updated to submit reports via the new API (so, forever).
 
 sub handle_post {
     my ( $c ) = @_;
-    $c->app->log->debug( "Got: " . $c->req->body );
+    #$c->app->log->debug( "Got: " . $c->req->body );
 
     # Validate the user
     my ( undef, $auth ) = split / /, $c->req->headers->authorization;
@@ -103,6 +103,9 @@ sub handle_post {
     my $fact = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
         ->from_struct( $body );
     my $row = $c->schema->resultset( 'TestReport' )->insert_metabase_fact( $fact );
+    $c->app->log->info(
+        sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
+    );
 
     my $url = $c->req->url->clone;
     my $path = $url->path;
@@ -130,7 +133,7 @@ L<CPAN::Testers::Schema::Result::MetabaseUser> result class).
 =cut
 
 sub handle_register( $c ) {
-    $c->app->log->debug( $c->req->body );
+    #$c->app->log->debug( $c->req->body );
     my @things = ref $c->req->json eq 'ARRAY' ? $c->req->json->@* : ( $c->req->json );
     for my $body ( @things ) {
         my $fact = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
@@ -144,6 +147,10 @@ sub handle_register( $c ) {
             fullname => $fullname->content,
             email => $email->content,
         });
+
+        $c->app->log->info(
+            sprintf 'Registered user %s from %s (%s)', $row->resource, $row->fullname, $row->email,
+        );
     }
 
     return $c->render(

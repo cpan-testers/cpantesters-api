@@ -195,6 +195,7 @@ See a log of the last view CPAN Testers reports.
 =cut
 
 get '/tail/log' => sub( $c ) {
+    $c->res->headers->cache_control( 'max-age=300' ); # Cache for 300 seconds
     my $rs = $c->schema->resultset( 'TestReport' )->search(
         { 'language' => 'Perl 5' },
         { order_by => { -desc => 'created' }, rows => 1000 },

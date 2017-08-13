@@ -23,10 +23,18 @@ my $mysqld = Test::mysqld->new(
 
 use Mojo::JSON qw( to_json );
 
+my $tempdir = tempdir;
+local $ENV{MOJO_HOME} = "".$tempdir;
+$tempdir->child( 'tail.log' )->spurt( $$ ); # Prevent initial tail.log generation
+
 my $SHARE_DIR = path( $Bin, '..', 'share' );
+local $ENV{MOJO_CONFIG} = $SHARE_DIR->child( '../etc/metabase.conf' );
+
 my $bin_path = path( $Bin, '..', '..', 'bin', 'cpantesters-legacy-metabase' );
 require $bin_path;
 my $t = Test::Mojo->new;
+
+ok !-f $t->app->home->child( 'tail.lock' ), 'lock not created';
 
 my $schema = $t->app->schema(
     CPAN::Testers::Schema->connect(
@@ -182,8 +190,7 @@ subtest 'post report' => sub {
             },
         });
 
-        my $tempdir = tempdir;
-        $t->app->home( $tempdir );
+        unlink $t->app->home->child( 'tail.log' );
         $t->app->refresh_tail_log;
         ok !-f $t->app->home->child( 'tail.lock' ), 'lock file removed';
         $t->get_ok( '/tail/log.txt' )

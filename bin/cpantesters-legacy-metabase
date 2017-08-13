@@ -226,6 +226,11 @@ Mojo::IOLoop->recurring(
     sub { Mojo::IOLoop->subprocess( sub { app->refresh_tail_log } ) }
 );
 
+my $file = app->home->child( 'tail.log' );
+if ( !-f $file || [stat $file]->[9] < time - 480 - ( 240 * rand ) ) {
+    Mojo::IOLoop->subprocess( sub { app->refresh_tail_log } );
+}
+
 app->start;
 __DATA__
 @@ index.html.ep

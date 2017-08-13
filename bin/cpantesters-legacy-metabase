@@ -195,8 +195,9 @@ See a log of the last view CPAN Testers reports.
 =cut
 
 get '/tail/log' => sub( $c ) {
-    $c->res->headers->cache_control( 'max-age=300' ); # Cache for 300 seconds
     my $file = app->home->child( 'tail.log' );
+    my $age = time - [stat $file]->[9];
+    $c->res->headers->cache_control( 'max-age=' . ( 300 - $age ) ); # Cache for 300 seconds
     return $c->render( format => 'txt', text => $file->slurp );
 };
 

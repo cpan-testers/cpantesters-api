@@ -197,7 +197,7 @@ See a log of the last view CPAN Testers reports.
 get '/tail/log' => sub( $c ) {
     $c->res->headers->cache_control( 'max-age=300' ); # Cache for 300 seconds
     my $file = app->home->child( 'tail.log' );
-    return $c->render( format => 'txt', content => $file->slurp );
+    return $c->render( format => 'txt', text => $file->slurp );
 };
 
 helper refresh_tail_log => sub {

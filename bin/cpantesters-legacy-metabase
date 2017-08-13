@@ -197,8 +197,10 @@ See a log of the last view CPAN Testers reports.
 get '/tail/log' => sub( $c ) {
     my $file = app->home->child( 'tail.log' );
     my $age = time - [stat $file]->[9];
-    $c->res->headers->cache_control( 'max-age=' . ( 300 - $age ) ); # Cache for 300 seconds
-    return $c->render( format => 'txt', text => $file->slurp );
+    $c->res->headers->cache_control( 'max-age=' . ( 300 - $age ) . ', must-revalidate' ); # Cache for 300 seconds
+    $c->res->headers->content_type( 'text/plain' );
+    my $asset = Mojo::Asset::File->new( path => $file );
+    return $c->reply->asset( $asset );
 };
 
 helper refresh_tail_log => sub {

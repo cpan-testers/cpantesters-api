@@ -207,8 +207,8 @@ helper refresh_tail_log => sub {
     my $lock = app->home->child( 'tail.lock' );
     return if -f $lock;
     my $file = app->home->child( 'tail.log' );
-    # Cache expires in 8 minutes +/- 4 minutes (to avoid cache stampedes)
-    if ( !-f $file || [stat $file ]->[9] < time - 480 - ( 240 * rand ) ) {
+    # Cache expires in 4 minutes + 0-4 minutes (to avoid cache stampedes)
+    if ( !-f $file || [stat $file ]->[9] < time - 240 - ( 240 * rand ) ) {
         $lock->spurt( $$ );
         my $rs = app->schema->resultset( 'TestReport' )->search(
             #{ 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
@@ -229,7 +229,7 @@ Mojo::IOLoop->recurring(
 );
 
 my $file = app->home->child( 'tail.log' );
-if ( !-f $file || [stat $file]->[9] < time - 480 - ( 240 * rand ) ) {
+if ( !-f $file || [stat $file]->[9] < time - 240 - ( 240 * rand ) ) {
     Mojo::IOLoop->subprocess( sub { app->refresh_tail_log } );
 }
 

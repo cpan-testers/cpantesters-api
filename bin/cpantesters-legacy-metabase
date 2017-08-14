@@ -108,7 +108,7 @@ sub handle_post {
         sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
     );
 
-    Beam::Minion->enqueue( report => 'process', $row->id );
+    Beam::Minion->enqueue( report => 'queue', $row->id );
 
     my $url = $c->req->url->clone;
     my $path = $url->path;

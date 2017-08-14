@@ -205,34 +205,17 @@ get '/tail/log' => sub( $c ) {
 };
 
 helper refresh_tail_log => sub {
-    my $lock = app->home->child( 'tail.lock' );
-    return if -f $lock;
     my $file = app->home->child( 'tail.log' );
-    # Cache expires in 4 minutes + 0-4 minutes (to avoid cache stampedes)
-    if ( !-f $file || [stat $file ]->[9] < time - 240 - ( 240 * rand ) ) {
-        $lock->spurt( $$ );
-        my $rs = app->schema->resultset( 'TestReport' )->search(
-            #{ 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
-            { 'language' => 'Perl 5' },
-            { order_by => { -desc => 'created' }, rows => 1000 },
-        );
-        my @reports = $rs->all;
-        $file->spurt(
-            app->build_controller->render_to_string( 'tail/log', format => 'txt', reports => \@reports )
-        );
-        unlink $lock;
-    }
+    my $rs = app->schema->resultset( 'TestReport' )->search(
+        #{ 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
+        { 'language' => 'Perl 5' },
+        { order_by => { -desc => 'created' }, rows => 1000 },
+    );
+    my @reports = $rs->all;
+    $file->spurt(
+        app->build_controller->render_to_string( 'tail/log', format => 'txt', reports => \@reports )
+    );
 };
-
-Mojo::IOLoop->recurring(
-    60,     # Check for cache expiry every 60 seconds
-    sub { Mojo::IOLoop->subprocess( sub { app->refresh_tail_log } ) }
-);
-
-my $file = app->home->child( 'tail.log' );
-if ( !-f $file || [stat $file]->[9] < time - 240 - ( 240 * rand ) ) {
-    Mojo::IOLoop->subprocess( sub { app->refresh_tail_log } );
-}
 
 app->start;
 __DATA__

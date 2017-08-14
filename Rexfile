@@ -98,7 +98,7 @@ task deploy_dev =>
             source => $dist;
 
         Rex::Logger::info( 'Installing ' . $dist );
-        run 'source ~/.profile; cpanm -v --with-recommends ~/dist/' . $dist;
+        run 'source ~/.profile; cpanm -v --notest --with-recommends ~/dist/' . $dist;
         if ( $? ) {
             say last_command_output;
         }
@@ -143,6 +143,21 @@ task deploy_service =>
             source => 'etc/runit/legacy-metabase/etc/metabase.conf';
         file '~/service/legacy-metabase/log/run',
             source => 'etc/runit/legacy-metabase/log/run';
+
+        file '~/var/log/metabase',
+            ensure => 'directory';
+
+        cron_entry 'tail-log',
+            user => 'cpantesters',
+            minute => '*/5',
+            hour => '*',
+            day_of_month => '*',
+            month => '*',
+            day_of_week => '*',
+            ensure => 'present',
+            command => 'MOJO_HOME=$HOME/service/legacy-metabase cpantesters-legacy-metabase eval "app->refresh_tail_log" >>$HOME/var/log/metabase/tail.log 2>&1',
+            ;
+
     };
 
 =head2 restart

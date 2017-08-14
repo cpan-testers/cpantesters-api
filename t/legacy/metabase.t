@@ -25,7 +25,6 @@ use Mojo::JSON qw( to_json );
 
 my $tempdir = tempdir;
 local $ENV{MOJO_HOME} = "".$tempdir;
-$tempdir->child( 'tail.log' )->spurt( $$ ); # Prevent initial tail.log generation
 
 my $SHARE_DIR = path( $Bin, '..', 'share' );
 local $ENV{MOJO_CONFIG} = $SHARE_DIR->child( '../etc/metabase.conf' );
@@ -190,9 +189,7 @@ subtest 'post report' => sub {
             },
         });
 
-        unlink $t->app->home->child( 'tail.log' );
         $t->app->refresh_tail_log;
-        ok !-f $t->app->home->child( 'tail.lock' ), 'lock file removed';
         $t->get_ok( '/tail/log.txt' )
           ->content_like( qr{The last \d+ reports as of \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z:} )
           ->content_like( qr{\Q[2017-01-01T00:00:00Z] [Doug Bell] [pass] [PREACTION/CPAN-Testers-Schema-1.001.tar.gz] [x86_64-linux] [perl-v5.24.0] [$guid] [2017-01-01T00:00:00Z]} )

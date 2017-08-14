@@ -152,7 +152,7 @@ subtest 'post report' => sub {
             created => DateTime->new( %date ),
             report => {
                 reporter => {
-                    name => 'Doug Bell',
+                    name => 'Andreas J. K&ouml;nig (ANDK)',
                 },
                 environment => {
                     language => {
@@ -199,7 +199,7 @@ subtest 'post report' => sub {
         $t->app->refresh_tail_log;
         $t->get_ok( '/tail/log.txt' )
           ->content_like( qr{The last \d+ reports as of \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z:} )
-          ->content_like( qr{\Q[2017-01-01T00:00:00Z] [Doug Bell] [pass] [PREACTION/CPAN-Testers-Schema-1.001.tar.gz] [x86_64-linux] [perl-v5.24.0] [$guid] [2017-01-01T00:00:00Z]} )
+          ->content_like( qr{\Q[2017-01-01T00:00:00Z] [Andreas J. K&ouml;nig (ANDK)] [pass] [PREACTION/CPAN-Testers-Schema-1.001.tar.gz] [x86_64-linux] [perl-v5.24.0] [$guid] [2017-01-01T00:00:00Z]} )
           ->content_unlike( qr{\Q[perl-v2017.05]}, 'does not read Perl 6 reports' )
           ;
     };

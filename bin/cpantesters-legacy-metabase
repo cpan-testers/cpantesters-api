@@ -280,5 +280,5 @@ The last <%= scalar @reports %> reports as of <%= DateTime->now %>Z:
 % my $upload = $row->upload;
 % my $file = $upload ? join "/", $upload->author, $upload->filename : '';
 % my ( $arch, $perl_version ) = $report->{environment}{language}->@{qw(archname version )};
-[<%= $row->created %>Z] [<%= $name %>] [<%= $grade %>] [<%= $file %>] [<%= $arch %>] [perl-<%= $perl_version %>] [<%= $row->id %>] [<%= $row->created %>Z]
+[<%== $row->created %>Z] [<%== $name %>] [<%== $grade %>] [<%== $file %>] [<%== $arch %>] [perl-<%== $perl_version %>] [<%== $row->id %>] [<%== $row->created %>Z]
 % }

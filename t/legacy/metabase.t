@@ -13,6 +13,7 @@ use CPAN::Testers::Fact::TestSummary;
 use CPAN::Testers::Fact::LegacyReport;
 use Metabase::User::Profile;
 use Mojo::Util qw( b64_encode );
+use Mock::MonkeyPatch;
 eval { require Test::mysqld } or plan skip_all => 'Requires Test::mysqld';
 
 my $mysqld = Test::mysqld->new(
@@ -43,6 +44,7 @@ my $schema = $t->app->schema(
 $schema->deploy;
 
 subtest 'post report' => sub {
+    my $mock_enqueue = Mock::MonkeyPatch->patch( 'Beam::Minion::enqueue' => sub { } );
     my %creator = (
         full_name => 'Doug Bell',
         email_address => 'doug@preaction.me',
@@ -70,6 +72,7 @@ subtest 'post report' => sub {
           ->status_is( 401 )
           ->or( sub { diag explain shift->tx->res->body } )
           ;
+        ok !$mock_enqueue->called, 'report not enqueued';
     };
 
     subtest 'check if user exists' => sub {
@@ -120,6 +123,10 @@ subtest 'post report' => sub {
             'language version is correct';
         is $row->report->{environment}{language}{archname}, 'x86_64-linux',
             'language arch is correct';
+
+        ok $mock_enqueue->called, 'report enqueued';
+        is_deeply $mock_enqueue->method_arguments, [qw( report process ), $row->id],
+            'enqueue arguments are correct';
     };
 
     subtest 'tail/log.txt' => sub {

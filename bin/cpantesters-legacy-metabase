@@ -23,6 +23,7 @@ use CPAN::Testers::Report;
 use FindBin ();
 use CPAN::Testers::Schema;
 use Mojo::Util qw( b64_decode );
+use Beam::Minion;
 
 =head1 CONFIG
 
@@ -106,6 +107,8 @@ sub handle_post {
     $c->app->log->info(
         sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
     );
+
+    Beam::Minion->enqueue( report => 'process', $row->id );
 
     my $url = $c->req->url->clone;
     my $path = $url->path;

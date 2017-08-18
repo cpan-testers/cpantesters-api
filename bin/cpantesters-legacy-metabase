@@ -210,8 +210,7 @@ get '/tail/log' => sub( $c ) {
 helper refresh_tail_log => sub {
     my $file = app->home->child( 'tail.log' );
     my $rs = app->schema->resultset( 'TestReport' )->search(
-        #{ 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
-        { 'language' => 'Perl 5' },
+        { 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
         { order_by => { -desc => 'created' }, rows => 1000 },
     );
     my @reports = $rs->all;

@@ -17,8 +17,8 @@ my $t = prepare_test_app();
 subtest '/v3/report' => \&_test_api, '/v3';
 
 sub _test_api( $base ) {
-    subtest 'post report' => sub {
-        my $report = decode_json( $SHARE_DIR->child( 'perl5.v3.json' )->slurp );
+    subtest 'post valid report' => sub {
+        my $report = decode_json( $SHARE_DIR->child( qw( report perl5 valid.v3.json ) )->slurp );
         $t->post_ok( $base . '/report', json => $report )
           ->status_is( 201 )
           ->or( sub { diag shift->tx->res->body } )

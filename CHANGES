@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.016     2017-08-18 13:31:09-05:00 America/Chicago
+
     [Notes]
 
     - The legacy Metabase compatibility API is now released! Lots of

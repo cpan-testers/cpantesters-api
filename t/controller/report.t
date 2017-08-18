@@ -26,6 +26,18 @@ sub _test_api( $base ) {
           ;
     };
 
+    subtest 'invalid report: version number starts with v' => sub {
+        my $report = decode_json( $SHARE_DIR->child( qw( report perl5 invalid-version-v.json ) )->slurp );
+        $t->post_ok( $base . '/report', json => $report )
+          ->status_is( 400 )
+          ->or( sub { diag shift->tx->res->body } )
+          ->json_is( '/errors/0/path' => '/report/environment/language' )
+          ->or( sub { diag shift->tx->res->body } )
+          ->json_like( '/errors/0/message' => qr{String does not match} )
+          ->or( sub { diag shift->tx->res->body } )
+          ;
+    };
+
     subtest 'get report' => sub {
         my $row = $t->app->schema->resultset( 'TestReport' )->first;
         $t->get_ok( $base . '/report/' . $row->id )

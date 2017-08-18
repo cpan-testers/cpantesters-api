@@ -1,5 +1,6 @@
 requires "Alien::SwaggerUI" => "0";
-requires "CPAN::Testers::Schema" => "0.013";
+requires "Beam::Minion" => "0.004";
+requires "CPAN::Testers::Schema" => "0.014";
 requires "File::Share" => "0";
 requires "Import::Base" => "0.012";
 requires "Log::Any" => "1.045";
@@ -16,6 +17,7 @@ on 'test' => sub {
   requires "File::Spec" => "0";
   requires "IO::Handle" => "0";
   requires "IPC::Open3" => "0";
+  requires "Mock::MonkeyPatch" => "0";
   requires "SQL::Translator" => "0.11018";
   requires "Test::Lib" => "0";
   requires "Test::More" => "1.001005";

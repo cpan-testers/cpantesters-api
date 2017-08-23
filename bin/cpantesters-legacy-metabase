@@ -42,6 +42,7 @@ CPAN Testers schema using: C<< cpantesters-schema install dbi:SQLite:local.db >>
 
 =cut
 
+app->log( Mojo::Log->new ); # Log only to STDERR
 app->home( path( $FindBin::Bin )->dirname ) unless $ENV{MOJO_HOME};
 app->moniker( 'metabase' );
 my $root_conf = app->home->child( sprintf 'etc/%s.conf', app->moniker );

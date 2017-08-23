@@ -118,7 +118,7 @@ desc "Deploy service files";
 task deploy_service =>
     group => 'api',
     sub {
-        file '~/service/api/log/main',
+        file '~/service/api/log',
             ensure => 'directory';
         file '~/service/api/run',
             source => 'etc/runit/api/run';
@@ -126,14 +126,14 @@ task deploy_service =>
             source => 'etc/runit/api/api.conf';
         file '~/service/api/log/run',
             source => 'etc/runit/api/log/run';
-        file '~/service/broker/log/main',
+        file '~/service/broker/log',
             ensure => 'directory';
         file '~/service/broker/run',
             source => 'etc/runit/broker/run';
         file '~/service/broker/log/run',
             source => 'etc/runit/broker/log/run';
 
-        file '~/service/legacy-metabase/log/main',
+        file '~/service/legacy-metabase/log',
             ensure => 'directory';
         file '~/service/legacy-metabase/run',
             source => 'etc/runit/legacy-metabase/run';

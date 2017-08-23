@@ -2,6 +2,15 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - All logs for all services are now being written to STDERR and
+      rotated correctly by runit's svlogd.
+
+    - Minion jobs are now using MySQL instead of SQLite. This has been
+      performing much better, since SQLite's locking doesn't make it
+      good for multiple, distributed processes.
+
 0.016     2017-08-18 13:31:09-05:00 America/Chicago
 
     [Notes]

@@ -1,5 +1,5 @@
 package CPAN::Testers::API;
-our $VERSION = '0.017';
+our $VERSION = '0.018';
 # ABSTRACT: REST API for CPAN Testers data
 
 =head1 SYNOPSIS

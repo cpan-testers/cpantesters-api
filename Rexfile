@@ -118,6 +118,7 @@ desc "Deploy service files";
 task deploy_service =>
     group => 'api',
     sub {
+        Rex::Logger::info( 'Deploying service files' );
         file '~/service/api/log',
             ensure => 'directory';
         file '~/service/api/run',
@@ -144,6 +145,7 @@ task deploy_service =>
         file '~/service/legacy-metabase/log/run',
             source => 'etc/runit/legacy-metabase/log/run';
 
+        Rex::Logger::info( 'Deploying crontab entries' );
         file '~/var/log/metabase',
             ensure => 'directory';
 
@@ -172,6 +174,7 @@ desc "Restart services";
 task restart =>
     group => 'api',
     sub {
+        Rex::Logger::info( 'Restarting services' );
         run 'sv restart ~/service/api';
         run 'sv restart ~/service/broker';
         run 'sv restart ~/service/legacy-metabase';

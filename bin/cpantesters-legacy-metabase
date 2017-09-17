@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-our $VERSION = '0.018';
+our $VERSION = '0.019';
 # ABSTRACT: An API from the legacy Metabase::Web to the local database
 
 =head1 SYNOPSIS

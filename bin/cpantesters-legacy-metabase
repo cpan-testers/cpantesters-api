@@ -109,7 +109,7 @@ sub handle_post {
         sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
     );
 
-    Beam::Minion->enqueue( report => 'queue', $row->id );
+    Beam::Minion->enqueue( report => 'queue', [ $row->id ], { attempts => 10 } );
 
     my $url = $c->req->url->clone;
     my $path = $url->path;

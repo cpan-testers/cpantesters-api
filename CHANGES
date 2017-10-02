@@ -2,6 +2,13 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed a problem where Metabase user registration would throw an
+      error even though the user was registered successfully. Also,
+      I improved the logging around this to try to figure out why these
+      errors were happening.
+
 0.018     2017-09-17 18:13:46-05:00 America/Chicago
 
     [Fixed]

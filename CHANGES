@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.019     2017-10-01 19:21:04-05:00 America/Chicago
+
     [Fixed]
 
     - Fixed a problem where Metabase user registration would throw an

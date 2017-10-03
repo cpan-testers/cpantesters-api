@@ -1,5 +1,5 @@
 package CPAN::Testers::API::Controller::Release;
-our $VERSION = '0.020';
+our $VERSION = '0.021';
 # ABSTRACT: API for test reports collected by CPAN release
 
 =head1 DESCRIPTION

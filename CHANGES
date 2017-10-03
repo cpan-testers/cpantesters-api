@@ -2,6 +2,12 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed the url format on the schema contact URL, which was making
+      our tests fail with JSON::Validator version 1.03. Thanks @eserte
+      for the report! [GitHub #14]
+
 0.019     2017-10-01 19:21:04-05:00 America/Chicago
 
     [Fixed]

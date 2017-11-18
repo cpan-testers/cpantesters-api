@@ -57,6 +57,7 @@
                 },
                 "parameters": [
                     { "$ref": "#/parameters/since" },
+                    { "$ref": "#/parameters/limit" },
                     {
                         "name": "dist",
                         "in": "path",
@@ -86,6 +87,7 @@
                 },
                 "parameters": [
                     { "$ref": "#/parameters/since" },
+                    { "$ref": "#/parameters/limit" },
                     {
                         "name": "author",
                         "in": "path",
@@ -115,7 +117,8 @@
                     "action": "get"
                 },
                 "parameters": [
-                    { "$ref": "#/parameters/since" }
+                    { "$ref": "#/parameters/since" },
+                    { "$ref": "#/parameters/limit" }
                 ],
                 "responses": {
                     "400": {
@@ -145,6 +148,7 @@
                 },
                 "parameters": [
                     { "$ref": "#/parameters/since" },
+                    { "$ref": "#/parameters/limit" },
                     {
                         "name": "dist",
                         "in": "path",
@@ -175,6 +179,7 @@
                 },
                 "parameters": [
                     { "$ref": "#/parameters/since" },
+                    { "$ref": "#/parameters/limit" },
                     {
                         "name": "author",
                         "in": "path",
@@ -201,6 +206,13 @@
             "type": "string",
             "format": "date-time",
             "description": "Only send records that have been updated since the given date/time"
+        },
+        "limit": {
+          "name": "limit",
+          "in": "query",
+          "type": "string",
+          "format": "integer",
+          "description": "Only send up to a maximum of the given number of records"
         }
     },
 

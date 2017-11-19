@@ -128,18 +128,12 @@ sub _test_api( $base ) {
         };
 
         subtest '"limit" must be an integer' => sub {
-            for ( 'two', 3.14 ) {
+            for ( 'two', 3.14, -42 ) {
                 $t->get_ok( $base . '/release/dist/My-Dist?limit=two' )
                   ->status_is( 400 )
                   ->json_has( '/errors' )
                   ->or( sub { diag explain shift->tx->res->json } );
             }
-            subtest '"limit" is ignored if negative' => sub {
-                $t->get_ok( $base . '/release?limit=-3' )
-                  ->status_is( 200 )
-                  ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..6] ] )
-                  ->or( sub { diag explain shift->tx->res->json } );
-            };
         };
     };
 }

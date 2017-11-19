@@ -31,7 +31,7 @@ sub _test_api( $base ) {
     subtest 'all releases' => sub {
         $t->get_ok( $base . '/release' )
           ->status_is( 200 )
-          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..5] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..6] ] );
 
         subtest 'since (disabled until optimized)' => sub {
             $t->get_ok( $base . '/release?since=2016-08-20T00:00:00Z' )
@@ -39,17 +39,38 @@ sub _test_api( $base ) {
               ->json_has( '/errors' )
               ->or( sub { diag explain shift->tx->res->json } );
         };
+
+        subtest 'limit' => sub {
+            $t->get_ok( $base . '/release?limit=3' )
+              ->status_is( 200 )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..2] ] )
+              ->or( sub { diag explain shift->tx->res->json } );
+        };
     };
 
     subtest 'by dist' => sub {
         $t->get_ok( $base . '/release/dist/My-Dist' )
           ->status_is( 200 )
-          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,1,3] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..3] ] );
 
         subtest 'since' => sub {
             $t->get_ok( $base . '/release/dist/My-Dist?since=2016-08-20T00:00:00Z' )
               ->status_is( 200 )
-              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[1,3] ] )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[1..3] ] )
+              ->or( sub { diag explain shift->tx->res->json } );
+        };
+
+        subtest 'limit' => sub {
+            $t->get_ok( $base . '/release/dist/My-Dist?limit=2' )
+              ->status_is( 200 )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,1] ] )
+              ->or( sub { diag explain shift->tx->res->json } );
+        };
+
+        subtest 'since and limit' => sub {
+            $t->get_ok( $base . '/release/dist/My-Dist?since=2016-08-20T00:00:00Z&limit=2' )
+              ->status_is( 200 )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[1,2] ] )
               ->or( sub { diag explain shift->tx->res->json } );
         };
 
@@ -65,12 +86,26 @@ sub _test_api( $base ) {
     subtest 'by author' => sub {
         $t->get_ok( $base . '/release/author/PREACTION' )
           ->status_is( 200 )
-          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,2..5] ] );
+          ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,2,4..6] ] );
 
         subtest 'since' => sub {
             $t->get_ok( $base . '/release/author/PREACTION?since=2016-08-20T00:00:00Z' )
               ->status_is( 200 )
-              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[2..5] ] )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[2,4..6] ] )
+              ->or( sub { diag explain shift->tx->res->json } );
+        };
+
+        subtest 'limit' => sub {
+            $t->get_ok( $base . '/release/author/PREACTION?limit=3' )
+              ->status_is( 200 )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0,2,4] ] )
+              ->or( sub { diag explain shift->tx->res->json } );
+        };
+
+        subtest 'since and limit' => sub {
+            $t->get_ok( $base . '/release/author/PREACTION?since=2016-08-20T00:00:00Z&limit=2' )
+              ->status_is( 200 )
+              ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[2,4] ] )
               ->or( sub { diag explain shift->tx->res->json } );
         };
 
@@ -90,6 +125,21 @@ sub _test_api( $base ) {
               ->status_is( 400 )
               ->json_has( '/errors' )
               ->or( sub { diag explain shift->tx->res->json } );
+        };
+
+        subtest '"limit" must be an integer' => sub {
+            for ( 'two', 3.14 ) {
+                $t->get_ok( $base . '/release/dist/My-Dist?limit=two' )
+                  ->status_is( 400 )
+                  ->json_has( '/errors' )
+                  ->or( sub { diag explain shift->tx->res->json } );
+            }
+            subtest '"limit" is ignored if negative' => sub {
+                $t->get_ok( $base . '/release?limit=-3' )
+                  ->status_is( 200 )
+                  ->json_is( [ map { +{ $_->%{ @API_FIELDS } } } $data{Release}->@[0..6] ] )
+                  ->or( sub { diag explain shift->tx->res->json } );
+            };
         };
     };
 }
@@ -178,6 +228,15 @@ sub load_data {
                 filename => 'My-Other-1.003.tar.gz',
                 released => 1479525200,
             },
+            {
+                uploadid => 8,
+                type     => 'cpan',
+                author   => 'POSTACTION',
+                dist     => 'My-Dist',
+                version  => '1.004',
+                filename => 'My-Dist-1.004.tar.gz',
+                released => 1479525300,
+            },
         ],
 
         Stats => [
@@ -247,12 +306,36 @@ sub load_data {
             },{
                 %stats_default,
                 # Upload info
+                dist     => 'My-Dist',
+                version  => '1.004',
+                uploadid => 8,
+                # Stats info
+                id       => 6,
+                guid     => '00000000-0000-0000-0000-000000000006',
+                state    => 'pass',
+                postdate => '201608',
+                fulldate => '201608200115',
+            },{
+                %stats_default,
+                # Upload info
+                dist     => 'My-Dist',
+                version  => '1.004',
+                uploadid => 8,
+                # Stats info
+                id       => 7,
+                guid     => '00000000-0000-0000-0000-000000000007',
+                state    => 'pass',
+                postdate => '201608',
+                fulldate => '201608200130',
+            },{
+                %stats_default,
+                # Upload info
                 dist     => 'My-Other',
                 version  => '1.001',
                 uploadid => 4,
                 # Stats info
-                id       => 6,
-                guid     => '00000000-0000-0000-0000-000000000006',
+                id       => 8,
+                guid     => '00000000-0000-0000-0000-000000000008',
                 state    => 'fail',
                 postdate => '201608',
                 fulldate => '201608200130',
@@ -264,8 +347,8 @@ sub load_data {
                 version  => '1.002',
                 uploadid => 6,
                 # Stats info
-                id       => 7,
-                guid     => '00000000-0000-0000-0000-000000000007',
+                id       => 9,
+                guid     => '00000000-0000-0000-0000-000000000009',
                 state    => 'fail',
                 postdate => '201609',
                 fulldate => '201609180200',
@@ -277,8 +360,8 @@ sub load_data {
                 version  => '1.003',
                 uploadid => 7,
                 # Stats info
-                id       => 8,
-                guid     => '00000000-0000-0000-0000-000000000008',
+                id       => 10,
+                guid     => '00000000-0000-0000-0000-000000000010',
                 state    => 'fail',
                 postdate => '201609',
                 fulldate => '201609180230',
@@ -290,8 +373,8 @@ sub load_data {
                 version  => '1.003',
                 uploadid => 7,
                 # Stats info
-                id       => 9,
-                guid     => '00000000-0000-0000-0000-000000000009',
+                id       => 11,
+                guid     => '00000000-0000-0000-0000-000000000011',
                 state    => 'pass',
                 postdate => '201609',
                 fulldate => '201609180300',
@@ -332,21 +415,6 @@ sub load_data {
             {
                 %release_default,
                 # Upload info
-                dist     => 'My-Other',
-                version  => '1.001',
-                uploadid => 4,
-                # Stats
-                id       => 6,
-                guid     => '00000000-0000-0000-0000-000000000006',
-                # Release summary
-                pass     => 0,
-                fail     => 1,
-                na       => 0,
-                unknown  => 0,
-            },
-            {
-                %release_default,
-                # Upload info
                 dist     => 'My-Dist',
                 version  => '1.003',
                 uploadid => 5,
@@ -362,12 +430,42 @@ sub load_data {
             {
                 %release_default,
                 # Upload info
+                dist     => 'My-Dist',
+                version  => '1.004',
+                uploadid => 8,
+                # Stats
+                id       => 7,
+                guid     => '00000000-0000-0000-0000-000000000007',
+                # Release summary
+                pass     => 2,
+                fail     => 0,
+                na       => 0,
+                unknown  => 0,
+            },
+            {
+                %release_default,
+                # Upload info
+                dist     => 'My-Other',
+                version  => '1.001',
+                uploadid => 4,
+                # Stats
+                id       => 8,
+                guid     => '00000000-0000-0000-0000-000000000008',
+                # Release summary
+                pass     => 0,
+                fail     => 1,
+                na       => 0,
+                unknown  => 0,
+            },
+            {
+                %release_default,
+                # Upload info
                 dist     => 'My-Other',
                 version  => '1.002',
                 uploadid => 6,
                 # Stats
-                id       => 7,
-                guid     => '00000000-0000-0000-0000-000000000007',
+                id       => 9,
+                guid     => '00000000-0000-0000-0000-000000000009',
                 # Release summary
                 pass     => 0,
                 fail     => 1,
@@ -381,11 +479,11 @@ sub load_data {
                 version  => '1.003',
                 uploadid => 7,
                 # Stats
-                id       => 4,
-                guid     => '00000000-0000-0000-0000-000000000009',
+                id       => 11,
+                guid     => '00000000-0000-0000-0000-000000000011',
                 # Release summary
                 pass     => 1,
-                fail     => 0,
+                fail     => 1,
                 na       => 0,
                 unknown  => 0,
             },

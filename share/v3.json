@@ -349,8 +349,7 @@
     "limit": {
       "name": "limit",
       "in": "query",
-      "type": "string",
-      "format": "integer",
+      "type": "integer",
       "description": "Only send up to a maximum of the given number of records"
     }
   },

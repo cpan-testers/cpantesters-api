@@ -29,15 +29,15 @@ use CPAN::Testers::API::Base;
     GET /v1/release
     GET /v1/release?limit=2
     GET /v1/release?since=2016-01-01T12:34:00Z
-    GET /v1/release?since=2016-01-01T12:34:00Z?limit=2
+    GET /v1/release?since=2016-01-01T12:34:00Z&limit=2
     GET /v1/release/dist/My-Dist
     GET /v1/release/dist/My-Dist?limit=2
     GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z
-    GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z?limit=2
+    GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z&limit=2
     GET /v1/release/author/PREACTION
     GET /v1/release/author/PREACTION?limit=2
     GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z
-    GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z?limit=2
+    GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z&limit=2
 
     ### Response:
     200 OK

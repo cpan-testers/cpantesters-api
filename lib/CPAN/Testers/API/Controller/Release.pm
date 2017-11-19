@@ -91,9 +91,11 @@ sub release( $c ) {
     }
 
     my @results;
-
     my $limit = $c->param( 'limit' );
-    undef $limit if $limit and $limit < 1; # Can't require positive int in API spec
+    # OpenAPI spec doesn't support property "minimum" on parameters
+    if ( $limit and $limit < 1 ) {
+        return $c->render_error( 400 => 'The value for "limit" must be a positive integer' );
+    }
 
     if ( my $dist = $c->validation->param( 'dist' ) ) {
         $rs = $rs->by_dist( $dist );

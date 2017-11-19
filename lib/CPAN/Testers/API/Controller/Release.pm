@@ -27,11 +27,17 @@ use CPAN::Testers::API::Base;
 
     ### Requests:
     GET /v1/release
+    GET /v1/release?limit=2
     GET /v1/release?since=2016-01-01T12:34:00Z
+    GET /v1/release?since=2016-01-01T12:34:00Z?limit=2
     GET /v1/release/dist/My-Dist
+    GET /v1/release/dist/My-Dist?limit=2
     GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z
+    GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z?limit=2
     GET /v1/release/author/PREACTION
+    GET /v1/release/author/PREACTION?limit=2
     GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z
+    GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z?limit=2
 
     ### Response:
     200 OK
@@ -50,7 +56,8 @@ use CPAN::Testers::API::Base;
 
 Get release data. Results can be limited by distribution (with the
 C<dist> key in the stash), by author (with the C<author> key in the
-stash), and by date (with the C<since> query parameter).
+stash), and by date (with the C<since> query parameter). The total
+number of results returned can be limited with the C<limit> parameter.
 
 Release data contains a summary of the pass, fail, na, and unknown test
 results created by stable Perls. Development Perls (odd-numbered 5.XX
@@ -84,21 +91,26 @@ sub release( $c ) {
     }
 
     my @results;
+
+    my $limit = $c->param( 'limit' );
+    undef $limit if $limit and $limit < 1; # Can't require positive int in API spec
+
     if ( my $dist = $c->validation->param( 'dist' ) ) {
         $rs = $rs->by_dist( $dist );
-        @results = $rs->all;
+        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
         if ( !@results ) {
             return $c->render_error( 404, sprintf 'Distribution "%s" not found', $dist );
         }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {
-        @results = $rs->by_author( $author )->all;
+        $rs = $rs->by_author( $author );
+        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
         if ( !@results ) {
             return $c->render_error( 404, sprintf 'Author "%s" not found', $author );
         }
     }
     else {
-        @results = $rs->all;
+        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
     }
 
     return $c->render(

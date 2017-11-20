@@ -355,7 +355,7 @@
       "name": "maturity",
       "in": "query",
       "type": "string",
-      "format": "^(stable|dev)",
+      "pattern": "^(stable|dev)$",
       "description": "Only send records for distributions of the given maturity level"
     },
     "limit": {

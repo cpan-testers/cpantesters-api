@@ -101,9 +101,10 @@ broker is used to forward messages to every connected user.
 
 Doug Bell <preaction@cpan.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
 Breno G. de Oliveira <garu@cpan.org>
+Nick Tonkin <nick@nicktonkin.net>
 
 # COPYRIGHT AND LICENSE
 

@@ -26,18 +26,14 @@ use CPAN::Testers::API::Base;
 =method release
 
     ### Requests:
-    GET /v1/release
-    GET /v1/release?limit=2
-    GET /v1/release?since=2016-01-01T12:34:00Z
-    GET /v1/release?since=2016-01-01T12:34:00Z&limit=2
-    GET /v1/release/dist/My-Dist
-    GET /v1/release/dist/My-Dist?limit=2
-    GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z
-    GET /v1/release/dist/My-Dist?since=2016-01-01T12:34:00Z&limit=2
-    GET /v1/release/author/PREACTION
-    GET /v1/release/author/PREACTION?limit=2
-    GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z
-    GET /v1/release/author/PREACTION?since=2016-01-01T12:34:00Z&limit=2
+    GET /v3/release
+    GET /v3/release/dist/My-Dist
+    GET /v3/release/author/PREACTION
+
+    ### Optional query parameters:
+    # ?since=2016-01-01T12:34:00Z
+    # ?maturity=stable
+    # ?limit=2
 
     ### Response:
     200 OK
@@ -54,10 +50,21 @@ use CPAN::Testers::API::Base;
         }
     ]
 
-Get release data. Results can be limited by distribution (with the
-C<dist> key in the stash), by author (with the C<author> key in the
-stash), and by date (with the C<since> query parameter). The total
-number of results returned can be limited with the C<limit> parameter.
+Get release data. Results can be limited by:
+
+=over
+
+=item * distribution (with the C<dist> key in the stash)
+
+=item * author (with the C<author> key in the stash)
+
+=item * date (with the C<since> query parameter)
+
+=item * maturity (with the C<maturity> query parameter)
+
+=item * limit (limits the total number of results sent with the C<limit> query parameter)
+
+=back
 
 Release data contains a summary of the pass, fail, na, and unknown test
 results created by stable Perls. Development Perls (odd-numbered 5.XX
@@ -88,6 +95,10 @@ sub release( $c ) {
             return $c->render_error( 400 => '"since" parameter not allowed' );
         }
         $rs = $rs->since( $since );
+    }
+
+    if ( my $maturity = $c->param( 'maturity' ) ) {
+        $rs = $rs->maturity( $maturity );
     }
 
     my @results;

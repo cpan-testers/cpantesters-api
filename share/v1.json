@@ -216,7 +216,7 @@
             "name": "maturity",
             "in": "query",
             "type": "string",
-            "pattern": "^(stable|dev)$",
+            "enum": ["stable", "dev"],
             "description": "Only send records for distributions of the given maturity level"
     },
         "limit": {

@@ -30,7 +30,7 @@ use CPAN::Testers::API::Base;
     GET /v3/release/dist/My-Dist
     GET /v3/release/author/PREACTION
 
-    ### Optional query parameters:
+    ### Optional query parameters (may be combined):
     # ?since=2016-01-01T12:34:00Z
     # ?maturity=stable
     # ?limit=2

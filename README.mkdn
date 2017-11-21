@@ -104,7 +104,6 @@ Doug Bell <preaction@cpan.org>
 # CONTRIBUTORS
 
 Breno G. de Oliveira <garu@cpan.org>
-Nick Tonkin <nick@nicktonkin.net>
 
 # COPYRIGHT AND LICENSE
 

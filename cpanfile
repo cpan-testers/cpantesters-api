@@ -1,6 +1,6 @@
 requires "Alien::SwaggerUI" => "0";
 requires "Beam::Minion" => "0.007";
-requires "CPAN::Testers::Schema" => "0.015";
+requires "CPAN::Testers::Schema" => "0.014";
 requires "File::Share" => "0";
 requires "Import::Base" => "0.012";
 requires "Log::Any" => "1.045";

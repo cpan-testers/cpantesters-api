@@ -54,15 +54,25 @@ Get release data. Results can be limited by:
 
 =over
 
-=item * distribution (with the C<dist> key in the stash)
+=item *
 
-=item * author (with the C<author> key in the stash)
+distribution (with the C<dist> key in the stash)
 
-=item * date (with the C<since> query parameter)
+=item *
 
-=item * maturity (with the C<maturity> query parameter)
+author (with the C<author> key in the stash)
 
-=item * limit (limits the total number of results sent with the C<limit> query parameter)
+=item *
+
+date (with the C<since> query parameter)
+
+=item *
+
+maturity (with the C<maturity> query parameter)
+
+=item *
+
+limit (limits the total number of results sent with the C<limit> query parameter)
 
 =back
 

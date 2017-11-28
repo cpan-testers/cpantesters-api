@@ -3,6 +3,11 @@ perl:
     - "5.24"
     - "blead"
 
+services:
+      - mysql
+dist: trusty
+sudo: required
+
 matrix:
     include:
         - perl: "5.24"
@@ -11,6 +16,7 @@ matrix:
         - perl: "blead"
 
 before_install:
+    - sudo cp /etc/mysql/my.cnf /usr/share/mysql/my-default.cnf
     - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
     - source ~/travis-perl-helpers/init
     - build-perl

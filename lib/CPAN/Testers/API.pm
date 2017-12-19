@@ -98,6 +98,17 @@ sub startup ( $app ) {
     $r->get( '/docs/*path' => { path => 'index.html' } )->to(
         cb => sub {
             my ( $c ) = @_;
+            # Redirect so that trailing / helps browser build URLs and
+            # we have our spec loaded. Can't make its own route because
+            # the trailing `/` is optional in the Mojolicious route
+            # since we declared a default `path`. Must pass in
+            # a Mojo::URL object to redirect_to() so that the trailing
+            # slash is maintained.
+            if ( !$c->req->url->path->trailing_slash && $c->req->url->path eq '/docs' ) {
+                $c->req->url->path->trailing_slash(1);
+                $c->req->url->query( url => '/v3' );
+                return $c->redirect_to( $c->req->url );
+            }
             my $path = catfile( Alien::SwaggerUI->root_dir, $c->stash( 'path' ) );
             my $file = Mojo::Asset::File->new( path => $path );
             $c->reply->asset( $file );

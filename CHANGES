@@ -2,6 +2,10 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+    [Fixed]
+
+    - Fixed `/docs` route to always redirect to the latest docs
+
 0.021     2017-11-28 14:08:07-06:00 America/Chicago
 
     [Added]

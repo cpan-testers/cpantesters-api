@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.022     2018-01-12 13:23:19-06:00 America/Chicago
+
     [Added]
 
     - Added the ability to filter report summaries by grade

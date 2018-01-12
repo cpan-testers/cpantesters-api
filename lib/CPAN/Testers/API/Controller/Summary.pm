@@ -60,11 +60,14 @@ sub summary( $c ) {
     my $dist = $c->validation->param( 'dist' );
     my $version = $c->validation->param( 'version' );
 
+    my $grade = $c->validation->param( 'grade' );
+
     my $rs = $c->schema->resultset( 'Stats' );
     $rs = $rs->search(
         {
             dist => $dist,
             version => $version,
+            ( $grade ? ( state => $grade ) : () ),
         },
         {
             columns => [qw( guid fulldate state tester dist version platform perl osname osvers )],

@@ -5,6 +5,7 @@ Changelog for CPAN-Testers-API
     [Added]
 
     - Added the ability to filter report summaries by grade
+    - Improved speed of JSON rendering using Cpanel::JSON::XS
 
     [Fixed]
 

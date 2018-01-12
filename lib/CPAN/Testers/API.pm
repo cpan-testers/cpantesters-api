@@ -43,10 +43,12 @@ L<http://www.cpantesters.org>
 
 use Mojo::Base 'Mojolicious';
 use CPAN::Testers::API::Base;
+use Scalar::Util qw( blessed );
 use File::Share qw( dist_dir dist_file );
 use Log::Any::Adapter;
 use Alien::SwaggerUI;
 use File::Spec::Functions qw( catdir catfile );
+use JSON::MaybeXS qw( encode_json );
 
 =method schema
 
@@ -123,13 +125,22 @@ sub startup ( $app ) {
     $r->websocket( '/v3/upload/dist/:dist' )->to( 'Upload#feed' );
     $r->websocket( '/v3/upload/author/:author' )->to( 'Upload#feed' );
 
+    my $render_fast_json = sub( $c, $data ) {
+        if ( blessed $data || ( ref $data eq 'HASH' && $data->{errors} ) ) {
+            return Mojo::JSON::encode_json( $data );
+        }
+        return encode_json( $data );
+    };
+
     $app->plugin( OpenAPI => {
         url => dist_file( 'CPAN-Testers-API' => 'v1.json' ),
         allow_invalid_ref => 1,
+        renderer => $render_fast_json,
     } );
     $app->plugin( OpenAPI => {
         url => dist_file( 'CPAN-Testers-API' => 'v3.json' ),
         allow_invalid_ref => 1,
+        renderer => $render_fast_json,
     } );
     $app->helper( schema => sub { shift->app->schema } );
     $app->helper( render_error => \&render_error );

@@ -24,11 +24,11 @@ use Mojo::UserAgent;
 
     ### Requests:
     GET /v1/upload
-    GET /v1/upload?since=2016-01-01T12:34:00Z
+    GET /v1/upload?since=2016-01-01T12:34:00
     GET /v1/upload/dist/My-Dist
-    GET /v1/upload/dist/My-Dist?since=2016-01-01T12:34:00Z
+    GET /v1/upload/dist/My-Dist?since=2016-01-01T12:34:00
     GET /v1/upload/author/PREACTION
-    GET /v1/upload/author/PREACTION?since=2016-01-01T12:34:00Z
+    GET /v1/upload/author/PREACTION?since=2016-01-01T12:34:00
 
     ### Response:
     200 OK

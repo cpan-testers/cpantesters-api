@@ -206,6 +206,10 @@ See a log of the last view CPAN Testers reports.
 
 =cut
 
+app->cache_route->add(
+    tail_log => '/tail/log' => \&refresh_tail_log,
+    expires => 300,
+);
 get '/tail/log' => sub( $c ) {
     my $file = app->home->child( 'tail.log' );
     my $age = time - [stat $file]->[9];
@@ -216,7 +220,7 @@ get '/tail/log' => sub( $c ) {
     return $c->reply->asset( $asset );
 };
 
-helper refresh_tail_log => sub {
+sub refresh_tail_log {
     my $file = app->home->child( 'tail.log' );
     my $rs = app->schema->resultset( 'TestReport' )->search(
         { 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
@@ -226,7 +230,7 @@ helper refresh_tail_log => sub {
     $file->spurt(
         app->build_controller->render_to_string( 'tail/log', format => 'txt', reports => \@reports )
     );
-};
+}
 
 app->start;
 __DATA__

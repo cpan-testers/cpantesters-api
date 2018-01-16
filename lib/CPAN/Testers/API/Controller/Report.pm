@@ -1,5 +1,5 @@
 package CPAN::Testers::API::Controller::Report;
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 # ABSTRACT: Work with raw test reports
 
 =head1 DESCRIPTION

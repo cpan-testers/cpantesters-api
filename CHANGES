@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.023     2018-01-16 15:47:31-06:00 America/Chicago
+
     [Fixed]
 
     - Increased Minion::Backend::mysql version to fix issues working

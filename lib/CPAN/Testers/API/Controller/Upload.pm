@@ -1,5 +1,5 @@
 package CPAN::Testers::API::Controller::Upload;
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 # ABSTRACT: API for uploads to CPAN
 
 =head1 DESCRIPTION

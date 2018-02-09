@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.024     2018-02-08 21:04:03-06:00 America/Chicago
+
     [Added]
 
     - Add schema config key to allow for easily running a local version

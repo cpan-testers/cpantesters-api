@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.023
+version 0.024
 
 # STATUS
 
@@ -81,14 +81,38 @@ like:
     # api.conf
     {
         broker => 'ws://127.0.0.1:5000',
+        schema => 'dbi:SQLite:api.db',
     }
 
 The possible configuration keys are below:
 
-## broker
+- broker
 
-The URL to a [Mercury](https://metacpan.org/pod/Mercury) message broker, starting with `ws://`. This
-broker is used to forward messages to every connected user.
+    The URL to a [Mercury](https://metacpan.org/pod/Mercury) message broker, starting with `ws://`. This
+    broker is used to forward messages to every connected user.
+
+- schema
+
+    The DBI connect string to give to [CPAN::Testers::Schema](https://metacpan.org/pod/CPAN::Testers::Schema). If not specified,
+    will use ["connect\_from\_config" in CPAN::Testers::Schema](https://metacpan.org/pod/CPAN::Testers::Schema#connect_from_config).
+
+# LOCAL TESTING
+
+To run an instance of this for local testing, create an `api.conf` file
+to configure a SQLite schema:
+
+    # api.conf
+    {
+        schema => 'dbi:SQLite:api.sqlite3'
+    }
+
+For the [CPAN::Testers::Schema](https://metacpan.org/pod/CPAN::Testers::Schema) to work with SQLite, you will need to
+install an additional CPAN module, [DateTime::Format::SQLite](https://metacpan.org/pod/DateTime::Format::SQLite).
+
+Once this is configured, you can deploy a new, blank database using
+`cpantesters-api eval 'app->schema->deploy'`.
+
+Now you can run the API using `cpantesters-api daemon`.
 
 # SEE ALSO
 

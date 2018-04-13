@@ -117,28 +117,18 @@ sub release( $c ) {
     if ( $limit and $limit < 1 ) {
         return $c->render_error( 400 => 'The value for "limit" must be a positive integer' );
     }
+    if ( $limit ) {
+        $rs = $rs->slice( 0, $limit - 1 );
+    }
 
     if ( my $dist = $c->validation->param( 'dist' ) ) {
         $rs = $rs->by_dist( $dist );
-        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
-        if ( !@results ) {
-            return $c->render_error( 404, sprintf 'Distribution "%s" not found', $dist );
-        }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {
         $rs = $rs->by_author( $author );
-        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
-        if ( !@results ) {
-            return $c->render_error( 404, sprintf 'Author "%s" not found', $author );
-        }
-    }
-    else {
-        @results = $limit ? $rs->slice( 0, $limit - 1 ) : $rs->all;
     }
 
-    return $c->render(
-        openapi => \@results,
-    );
+    return $c->stream_rs( $rs );
 }
 
 1;

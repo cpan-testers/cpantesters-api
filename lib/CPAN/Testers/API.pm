@@ -176,6 +176,7 @@ sub startup ( $app ) {
     } );
     $app->helper( schema => sub { shift->app->schema } );
     $app->helper( render_error => \&render_error );
+    $app->helper( stream_rs => \&stream_rs );
 
     Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }
@@ -224,6 +225,56 @@ sub render_error( $c, $status, @errors ) {
             ],
         },
     );
+}
+
+=method stream_rs
+
+    $c->stream_rs( $rs );
+
+Stream a L<DBIx::Class::ResultSet> object to the browser. This prevents
+problems with proxy servers and CDNs timing out waiting for data. This
+uses L<Mojolicious::Controller/write_chunk> to transfer a chunked
+response. If there are no results in the ResultSet object, this method
+returns a 404 error.
+
+For this to work usefully behind Fastly, we also need to enable streaming
+miss so that Fastly streams the data to the end-user as it gets it:
+L<https://docs.fastly.com/guides/performance-tuning/improving-caching-performance-with-large-files#streaming-miss>.
+
+=cut
+
+sub stream_rs {
+    my ( $c, $rs ) = @_;
+    my $wrote_open = 0;
+    my $written = 0;
+    my @to_write;
+
+    my $flush_write = sub {
+        my $leading_comma = ',';
+        if ( !$wrote_open ) {
+            $c->write_chunk( '[' );
+            $wrote_open = 1;
+            $leading_comma = '';
+        }
+        my $to_write = join ",", map { encode_json( $_ ) } @to_write;
+        $c->write_chunk( $leading_comma . $to_write );
+        $written += @to_write;
+        @to_write = ();
+    };
+
+    while ( my $row = $rs->next ) {
+        push @to_write, $row;
+        if ( @to_write >= 5 ) {
+            $flush_write->();
+        }
+    }
+    if ( !$written && !@to_write ) {
+        return $c->render_error( 404, 'No results found' );
+    }
+    if ( @to_write ) {
+        $flush_write->();
+    }
+    return $c->write_chunk( ']', sub { shift->finish } );
 }
 
 1;

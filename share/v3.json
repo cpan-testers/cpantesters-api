@@ -130,33 +130,10 @@
             "type": "string",
             "required": true
           },
-          {
-            "name": "grade",
-            "in": "query",
-            "description": "Filter results by grade",
-            "type": "string",
-            "enum": [ "pass", "fail", "na", "unknown" ],
-            "required": false
-          },
-          {
-            "name": "perl",
-            "in": "query",
-            "description": "One or more Perl versions to return data for.",
-            "type": "array",
-            "items": { "type": "string" },
-            "collectionFormat": "multi",
-            "required": false
-          },
-          {
-            "name": "osname",
-            "in": "query",
-            "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
-            "type": "array",
-            "items": { "type": "string" },
-            "collectionFormat": "multi",
-            "required": false
-          },
-          { "$ref": "#/parameters/since" }
+          { "$ref": "#/parameters/since" },
+          { "$ref": "#/parameters/grade" },
+          { "$ref": "#/parameters/perl" },
+          { "$ref": "#/parameters/osname" }
         ],
         "responses": {
           "200": {
@@ -204,33 +181,10 @@
             "x-mojo-placeholder": "#",
             "required": true
           },
-          {
-            "name": "grade",
-            "in": "query",
-            "description": "Filter results by grade",
-            "type": "string",
-            "enum": [ "pass", "fail", "na", "unknown" ],
-            "required": false
-          },
-          {
-            "name": "perl",
-            "in": "query",
-            "description": "One or more Perl versions to return data for.",
-            "type": "array",
-            "items": { "type": "string" },
-            "collectionFormat": "multi",
-            "required": false
-          },
-          {
-            "name": "osname",
-            "in": "query",
-            "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
-            "type": "array",
-            "items": { "type": "string" },
-            "collectionFormat": "multi",
-            "required": false
-          },
-          { "$ref": "#/parameters/since" }
+          { "$ref": "#/parameters/since" },
+          { "$ref": "#/parameters/grade" },
+          { "$ref": "#/parameters/perl" },
+          { "$ref": "#/parameters/osname" }
         ],
         "responses": {
           "200": {
@@ -456,6 +410,32 @@
       "in": "query",
       "type": "integer",
       "description": "Only send up to a maximum of the given number of records"
+    },
+    "grade": {
+        "name": "grade",
+        "in": "query",
+        "description": "Filter results by grade",
+        "type": "string",
+        "enum": [ "pass", "fail", "na", "unknown" ],
+        "required": false
+    },
+    "perl": {
+        "name": "perl",
+        "in": "query",
+        "description": "One or more Perl versions to return data for.",
+        "type": "array",
+        "items": { "type": "string" },
+        "collectionFormat": "multi",
+        "required": false
+    },
+    "osname": {
+        "name": "osname",
+        "in": "query",
+        "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
+        "type": "array",
+        "items": { "type": "string" },
+        "collectionFormat": "multi",
+        "required": false
     }
   },
 

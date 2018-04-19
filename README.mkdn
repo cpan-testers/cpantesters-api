@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.024
+version 0.025
 
 # STATUS
 
@@ -71,6 +71,24 @@ The resulting JSON looks like so:
         ]
     }
 
+## stream\_rs
+
+    $c->stream_rs( $rs, $processor );
+
+Stream a [DBIx::Class::ResultSet](https://metacpan.org/pod/DBIx::Class::ResultSet) object to the browser. This prevents
+problems with proxy servers and CDNs timing out waiting for data. This
+uses ["write\_chunk" in Mojolicious::Controller](https://metacpan.org/pod/Mojolicious::Controller#write_chunk) to transfer a chunked
+response. If there are no results in the ResultSet object, this method
+returns a 404 error.
+
+`$processor` is an optional subref that allows for processing each row
+before it is written. Use this to translate column names or values into
+the format the API expects.
+
+For this to work usefully behind Fastly, we also need to enable streaming
+miss so that Fastly streams the data to the end-user as it gets it:
+[https://docs.fastly.com/guides/performance-tuning/improving-caching-performance-with-large-files#streaming-miss](https://docs.fastly.com/guides/performance-tuning/improving-caching-performance-with-large-files#streaming-miss).
+
 # CONFIG
 
 This application can be configured by setting the `MOJO_CONFIG`
@@ -133,7 +151,7 @@ Doug Bell <preaction@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2016 by Doug Bell.
+This software is copyright (c) 2018 by Doug Bell.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -64,10 +64,14 @@ sub summary( $c ) {
     my $perl = $c->validation->every_param( 'perl' );
     my $osname = $c->validation->every_param( 'osname' );
 
+    if ( !$dist && !$version && ( !$perl || !@$perl ) && ( !$osname || !@$osname ) ) {
+        return $c->render_error( 400, "You must provide one of 'perl' or 'osname'" );
+    }
+
     my $rs = $c->schema->resultset( 'Stats' );
     $rs = $rs->search(
         {
-            dist => $dist,
+            ( $dist ? ( dist => $dist ) : () ),
             ( $version ? ( version => $version ) : () ),
             ( $perl && @$perl ? ( perl => $perl ) : () ),
             ( $osname && @$osname ? ( osname => $osname ) : () ),

@@ -196,6 +196,30 @@ sub _test_api( $base ) {
           ;
     };
 
+    subtest 'by perl' => sub {
+        $t->get_ok( $base . '/summary?perl=5.20.0' )
+          ->status_is( 200 )
+          ->json_is( '/0/guid' => $data{Stats}[1]{guid} )
+          ->json_is( '/0/date' => '2016-08-12T00:00:00Z' )
+          ->json_is( '/0/grade' => 'fail' )
+          ->json_hasnt( '/0/state' )
+          ->json_is( '/0/reporter' => $data{Stats}[1]{tester} )
+          ->json_hasnt( '/1' )
+          ;
+    };
+
+    subtest 'by osname' => sub {
+        $t->get_ok( $base . '/summary?osname=linux' )
+          ->status_is( 200 )
+          ->json_is( '/0/guid' => $data{Stats}[2]{guid} )
+          ->json_is( '/0/date' => '2016-08-20T00:00:00Z' )
+          ->json_is( '/0/grade' => 'fail' )
+          ->json_hasnt( '/0/state' )
+          ->json_is( '/0/reporter' => $data{Stats}[2]{tester} )
+          ->json_hasnt( '/1' )
+          ;
+    };
+
     subtest 'since' => sub {
         $t->get_ok( $base . '/summary/My-Dist?since=2016-08-20T00:00:00Z' )
           ->status_is( 200 )
@@ -213,6 +237,14 @@ sub _test_api( $base ) {
           ->status_is( 404 )
           ->json_is( {
               errors => [ { message =>  'No results found', 'path' => '/' } ],
+          } );
+    };
+
+    subtest 'perl/osname not provided' => sub {
+        $t->get_ok( $base . '/summary' )
+          ->status_is( 400 )
+          ->json_is( {
+              errors => [ { message =>  q{You must provide one of 'perl' or 'osname'}, 'path' => '/' } ],
           } );
     };
 

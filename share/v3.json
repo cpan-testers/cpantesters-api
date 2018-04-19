@@ -113,6 +113,46 @@
       }
     },
 
+    "/summary": {
+      "get": {
+        "tags": [ "Summary" ],
+        "operationId": "v3_summary_all",
+        "summary": "Get test report summary info with various filters. One of either 'perl' or 'osname' must be provided.",
+        "x-mojo-to": {
+          "controller": "Summary",
+          "action": "summary"
+        },
+        "parameters": [
+          { "$ref": "#/parameters/since" },
+          { "$ref": "#/parameters/grade" },
+          { "$ref": "#/parameters/perl" },
+          { "$ref": "#/parameters/osname" }
+        ],
+        "responses": {
+          "200": {
+             "description": "The summary results",
+             "schema": {
+               "type": "array",
+               "title": "SummaryArray",
+               "items": { "$ref": "#/definitions/ReportSummary" }
+             }
+          },
+          "400": {
+            "description": "You did not provide one of 'perl' or 'osname' query parameters",
+            "schema": { "$ref": "#/definitions/Error" }
+          },
+          "500": {
+            "description": "We were unable to get the test summaries",
+            "schema": { "$ref": "#/definitions/Error" }
+          },
+          "404": {
+            "description": "The distribution version was not found",
+            "schema": { "$ref": "#/definitions/Error" }
+          }
+        }
+      }
+    },
+
     "/summary/{dist}": {
       "get": {
         "tags": [ "Summary" ],

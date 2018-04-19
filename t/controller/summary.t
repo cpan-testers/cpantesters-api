@@ -196,6 +196,18 @@ sub _test_api( $base ) {
           ;
     };
 
+    subtest 'since' => sub {
+        $t->get_ok( $base . '/summary/My-Dist?since=2016-08-20T00:00:00Z' )
+          ->status_is( 200 )
+          ->json_is( '/0/guid' => $data{Stats}[2]{guid} )
+          ->json_is( '/0/date' => '2016-08-20T00:00:00Z' )
+          ->json_hasnt( '/0/fulldate' )
+          ->json_is( '/0/grade' => 'fail' )
+          ->json_hasnt( '/0/state' )
+          ->json_is( '/0/reporter' => $data{Stats}[2]{tester} )
+          ;
+    };
+
     subtest 'dist not found' => sub {
         $t->get_ok( $base . '/summary/Not-Found/1.001' )
           ->status_is( 404 )

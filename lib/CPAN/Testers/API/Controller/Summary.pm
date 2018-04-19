@@ -80,6 +80,10 @@ sub summary( $c ) {
         }
     );
 
+    if ( my $since = $c->validation->param( 'since' ) ) {
+        $rs = $rs->since( $since );
+    }
+
     $c->stream_rs( $rs, sub {
         my $result = shift;
         $result->{grade} = delete $result->{state};

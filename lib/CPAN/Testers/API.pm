@@ -229,13 +229,17 @@ sub render_error( $c, $status, @errors ) {
 
 =method stream_rs
 
-    $c->stream_rs( $rs );
+    $c->stream_rs( $rs, $processor );
 
 Stream a L<DBIx::Class::ResultSet> object to the browser. This prevents
 problems with proxy servers and CDNs timing out waiting for data. This
 uses L<Mojolicious::Controller/write_chunk> to transfer a chunked
 response. If there are no results in the ResultSet object, this method
 returns a 404 error.
+
+C<$processor> is an optional subref that allows for processing each row
+before it is written. Use this to translate column names or values into
+the format the API expects.
 
 For this to work usefully behind Fastly, we also need to enable streaming
 miss so that Fastly streams the data to the end-user as it gets it:
@@ -244,7 +248,8 @@ L<https://docs.fastly.com/guides/performance-tuning/improving-caching-performanc
 =cut
 
 sub stream_rs {
-    my ( $c, $rs ) = @_;
+    my ( $c, $rs, $process ) = @_;
+    $process //= sub { shift };
     my $wrote_open = 0;
     my $written = 0;
     my @to_write;
@@ -256,7 +261,7 @@ sub stream_rs {
             $wrote_open = 1;
             $leading_comma = '';
         }
-        my $to_write = join ",", map { encode_json( $_ ) } @to_write;
+        my $to_write = join ",", map { encode_json( $process->( $_ ) ) } @to_write;
         $c->write_chunk( $leading_comma . $to_write );
         $written += @to_write;
         @to_write = ();

@@ -25,6 +25,7 @@ use CPAN::Testers::API::Base;
 =method summary
 
     ### Requests:
+    GET /v3/summary/My-Dist
     GET /v3/summary/My-Dist/1.000
 
     ### Response:
@@ -66,7 +67,7 @@ sub summary( $c ) {
     $rs = $rs->search(
         {
             dist => $dist,
-            version => $version,
+            ( $version ? ( version => $version ) : () ),
             ( $grade ? ( state => $grade ) : () ),
         },
         {
@@ -76,20 +77,13 @@ sub summary( $c ) {
         }
     );
 
-    my @results = $rs->all;
-    if ( !@results ) {
-        return $c->render_error( 404, sprintf 'No results found for dist "%s" version "%s"', $dist, $version );
-    }
-
-    for my $result ( @results ) {
+    $c->stream_rs( $rs, sub {
+        my $result = shift;
         $result->{grade} = delete $result->{state};
         $result->{date} = _format_date( delete $result->{fulldate} );
         $result->{reporter} = delete $result->{tester};
-    }
-
-    return $c->render(
-        openapi => \@results,
-    );
+        return $result;
+    } );
 }
 
 sub _format_date( $fulldate ) {

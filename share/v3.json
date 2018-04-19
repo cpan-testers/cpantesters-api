@@ -113,6 +113,53 @@
       }
     },
 
+    "/summary/{dist}": {
+      "get": {
+        "tags": [ "Summary" ],
+        "operationId": "v3_summary_dist",
+        "summary": "Get test report summary info for a specific distribution",
+        "x-mojo-to": {
+          "controller": "Summary",
+          "action": "summary"
+        },
+        "parameters": [
+          {
+            "name": "dist",
+            "in": "path",
+            "description": "The CPAN distribution name (like 'CPAN-Testers-Schema')",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "description": "Filter results by grade",
+            "type": "string",
+            "enum": [ "pass", "fail", "na", "unknown" ],
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+             "description": "The summary results",
+             "schema": {
+               "type": "array",
+               "title": "SummaryArray",
+               "items": { "$ref": "#/definitions/ReportSummary" }
+             }
+          },
+          "500": {
+            "description": "We were unable to get the test summaries",
+            "schema": { "$ref": "#/definitions/Error" }
+          },
+          "404": {
+            "description": "The distribution was not found",
+            "schema": { "$ref": "#/definitions/Error" }
+          }
+        }
+      }
+    },
+
     "/summary/{dist}/{version}": {
       "get": {
         "tags": [ "Summary" ],

@@ -146,6 +146,15 @@
             "items": { "type": "string" },
             "collectionFormat": "multi",
             "required": false
+          },
+          {
+            "name": "osname",
+            "in": "query",
+            "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "required": false
           }
         ],
         "responses": {
@@ -206,6 +215,15 @@
             "name": "perl",
             "in": "query",
             "description": "One or more Perl versions to return data for.",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "required": false
+          },
+          {
+            "name": "osname",
+            "in": "query",
+            "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
             "type": "array",
             "items": { "type": "string" },
             "collectionFormat": "multi",

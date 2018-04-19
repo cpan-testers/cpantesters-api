@@ -90,6 +90,7 @@ my %data = (
             state => 'fail',
             postdate => '201608',
             fulldate => '201608200000',
+            osname => 'linux',
         },
         {
             %stats_default,
@@ -179,6 +180,18 @@ sub _test_api( $base ) {
           ->json_is( '/0/grade' => 'fail' )
           ->json_hasnt( '/0/state' )
           ->json_is( '/0/reporter' => $data{Stats}[1]{tester} )
+          ->json_hasnt( '/1' )
+          ;
+    };
+
+    subtest 'by dist/osname' => sub {
+        $t->get_ok( $base . '/summary/My-Dist?osname=linux' )
+          ->status_is( 200 )
+          ->json_is( '/0/guid' => $data{Stats}[2]{guid} )
+          ->json_is( '/0/date' => '2016-08-20T00:00:00Z' )
+          ->json_is( '/0/grade' => 'fail' )
+          ->json_hasnt( '/0/state' )
+          ->json_is( '/0/reporter' => $data{Stats}[2]{tester} )
           ->json_hasnt( '/1' )
           ;
     };

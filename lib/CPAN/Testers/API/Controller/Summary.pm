@@ -62,6 +62,7 @@ sub summary( $c ) {
     my $version = $c->validation->param( 'version' );
     my $grade = $c->validation->param( 'grade' );
     my $perl = $c->validation->every_param( 'perl' );
+    my $osname = $c->validation->every_param( 'osname' );
 
     my $rs = $c->schema->resultset( 'Stats' );
     $rs = $rs->search(
@@ -69,6 +70,7 @@ sub summary( $c ) {
             dist => $dist,
             ( $version ? ( version => $version ) : () ),
             ( $perl && @$perl ? ( perl => $perl ) : () ),
+            ( $osname && @$osname ? ( osname => $osname ) : () ),
             ( $grade ? ( state => $grade ) : () ),
         },
         {

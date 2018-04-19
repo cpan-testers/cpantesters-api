@@ -1,5 +1,5 @@
 package CPAN::Testers::API::Controller::Summary;
-our $VERSION = '0.025';
+our $VERSION = '0.026';
 # ABSTRACT: API for test report summary data
 
 =head1 DESCRIPTION

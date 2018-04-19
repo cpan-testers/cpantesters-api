@@ -60,14 +60,15 @@ sub summary( $c ) {
 
     my $dist = $c->validation->param( 'dist' );
     my $version = $c->validation->param( 'version' );
-
     my $grade = $c->validation->param( 'grade' );
+    my $perl = $c->validation->every_param( 'perl' );
 
     my $rs = $c->schema->resultset( 'Stats' );
     $rs = $rs->search(
         {
             dist => $dist,
             ( $version ? ( version => $version ) : () ),
+            ( $perl && @$perl ? ( perl => $perl ) : () ),
             ( $grade ? ( state => $grade ) : () ),
         },
         {

@@ -137,6 +137,15 @@
             "type": "string",
             "enum": [ "pass", "fail", "na", "unknown" ],
             "required": false
+          },
+          {
+            "name": "perl",
+            "in": "query",
+            "description": "One or more Perl versions to return data for.",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "required": false
           }
         ],
         "responses": {
@@ -191,6 +200,15 @@
             "description": "Filter results by grade",
             "type": "string",
             "enum": [ "pass", "fail", "na", "unknown" ],
+            "required": false
+          },
+          {
+            "name": "perl",
+            "in": "query",
+            "description": "One or more Perl versions to return data for.",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
             "required": false
           }
         ],

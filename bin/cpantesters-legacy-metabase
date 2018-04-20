@@ -102,9 +102,7 @@ sub handle_post {
         );
     }
 
-    my $body = $c->req->json;
-    my $fact = Metabase::Fact->class_from_type( $body->{metadata}{core}{type} )
-        ->from_struct( $body );
+    my $fact = Metabase::Fact->from_json( $c->req->body );
     my $row = $c->schema->resultset( 'TestReport' )->insert_metabase_fact( $fact );
     $c->app->log->info(
         sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,

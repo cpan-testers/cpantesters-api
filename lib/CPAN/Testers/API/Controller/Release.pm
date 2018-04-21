@@ -125,7 +125,8 @@ sub release( $c ) {
         my $version = $c->validation->param( 'version' );
         $rs = $rs->by_dist( $dist, $version );
         if ( $version ) {
-            return $c->render( openapi => $rs->first );
+            my $data = $rs->first || return $c->render_error( 404, 'Not found' );
+            return $c->render( openapi => $data );
         }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {

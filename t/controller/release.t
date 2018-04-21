@@ -32,6 +32,10 @@ subtest '/v3/release - unique' => sub {
         $t->get_ok( '/v3/release/dist/My-Dist/1.001' )
           ->status_is( 200 )
           ->json_is( { $data{Release}[0]->%{ @API_FIELDS } } );
+        $t->get_ok( '/v3/release/dist/My-Dist/0.001' )
+          ->status_is( 404 )
+          ->json_has( '/errors' )
+          ;
     };
 };
 

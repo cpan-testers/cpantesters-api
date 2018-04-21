@@ -303,6 +303,48 @@
       }
     },
 
+    "/release/dist/{dist}/{version}": {
+      "get": {
+        "tags": [ "Release" ],
+        "operationId": "v3_release_dist_version",
+        "summary": "Get summary test report info for a single release of a distribution",
+        "x-mojo-to": {
+          "controller": "Release",
+          "action": "release"
+        },
+        "parameters": [
+          { "$ref": "#/parameters/since" },
+          { "$ref": "#/parameters/limit" },
+          { "$ref": "#/parameters/maturity" },
+          {
+            "name": "dist",
+            "in": "path",
+            "description": "The CPAN distribution name (like 'CPAN-Testers-Schema')",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The distribution version (like '1.043')",
+            "type": "string",
+            "required": true,
+            "x-mojo-placeholder": "#"
+          }
+        ],
+        "responses": {
+            "200": {
+                "description": "The release information",
+                "schema": { "$ref": "#/definitions/Release" }
+            },
+            "400": { "$ref": "#/paths/~1release/get/responses/400" },
+            "404": {
+                "description": "The distribution or version was not found"
+            }
+        }
+      }
+    },
+
     "/release/author/{author}": {
       "get": {
         "tags": [ "Release" ],

@@ -122,7 +122,11 @@ sub release( $c ) {
     }
 
     if ( my $dist = $c->validation->param( 'dist' ) ) {
-        $rs = $rs->by_dist( $dist );
+        my $version = $c->validation->param( 'version' );
+        $rs = $rs->by_dist( $dist, $version );
+        if ( $version ) {
+            return $c->render( openapi => $rs->first );
+        }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {
         $rs = $rs->by_author( $author );

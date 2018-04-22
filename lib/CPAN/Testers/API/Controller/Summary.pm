@@ -72,7 +72,7 @@ sub summary( $c ) {
     $rs = $rs->search(
         {
             ( $dist ? ( dist => $dist ) : () ),
-            ( $version ? ( version => $version ) : () ),
+            ( $version ? ( 'me.version' => $version ) : () ),
             ( $perl && @$perl ? ( perl => $perl ) : () ),
             ( $osname && @$osname ? ( osname => $osname ) : () ),
             ( $grade ? ( state => $grade ) : () ),

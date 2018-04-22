@@ -245,6 +245,16 @@ sub _test_api( $base ) {
           ->json_is( '/0/reporter' => $data{Stats}[1]{tester} )
           ->json_hasnt( '/1' )
           ;
+        $t->get_ok( $base . '/summary/My-Dist/1.001?perl_maturity=dev' )
+          ->status_is( 200 )
+          ->or( sub { diag shift->tx->res->body } )
+          ->json_is( '/0/guid' => $data{Stats}[1]{guid} )
+          ->json_is( '/0/date' => '2016-08-12T00:00:00Z' )
+          ->json_is( '/0/grade' => 'fail' )
+          ->json_hasnt( '/0/state' )
+          ->json_is( '/0/reporter' => $data{Stats}[1]{tester} )
+          ->json_hasnt( '/1' )
+          ;
     };
 
     subtest 'since' => sub {

@@ -126,7 +126,8 @@
           { "$ref": "#/parameters/since" },
           { "$ref": "#/parameters/grade" },
           { "$ref": "#/parameters/perl" },
-          { "$ref": "#/parameters/osname" }
+          { "$ref": "#/parameters/osname" },
+          { "$ref": "#/parameters/perl_maturity" }
         ],
         "responses": {
           "200": {
@@ -173,7 +174,8 @@
           { "$ref": "#/parameters/since" },
           { "$ref": "#/parameters/grade" },
           { "$ref": "#/parameters/perl" },
-          { "$ref": "#/parameters/osname" }
+          { "$ref": "#/parameters/osname" },
+          { "$ref": "#/parameters/perl_maturity" }
         ],
         "responses": {
           "200": {
@@ -224,7 +226,8 @@
           { "$ref": "#/parameters/since" },
           { "$ref": "#/parameters/grade" },
           { "$ref": "#/parameters/perl" },
-          { "$ref": "#/parameters/osname" }
+          { "$ref": "#/parameters/osname" },
+          { "$ref": "#/parameters/perl_maturity" }
         ],
         "responses": {
           "200": {
@@ -518,6 +521,13 @@
         "items": { "type": "string" },
         "collectionFormat": "multi",
         "required": false
+    },
+    "perl_maturity": {
+      "name": "perl_maturity",
+      "in": "query",
+      "type": "string",
+      "enum": ["stable", "dev"],
+      "description": "Only send records for Perl versions of the given maturity level"
     }
   },
 

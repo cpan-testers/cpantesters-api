@@ -88,6 +88,10 @@ sub summary( $c ) {
         $rs = $rs->since( $since );
     }
 
+    if ( my $perl_mat = $c->validation->param( 'perl_maturity' ) ) {
+        $rs = $rs->perl_maturity( $perl_mat );
+    }
+
     $c->stream_rs( $rs, sub {
         my $result = shift;
         $result->{grade} = delete $result->{state};

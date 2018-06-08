@@ -3,15 +3,14 @@
   "info": {
     "version": "3.0",
     "title": "CPAN Testers API 3.0",
-    "description": "API to submit and manipulate test reports",
+    "description": "API to read CPAN Testers data and submit new test reports. This API lets you build your own data visualizations (like [the CPAN Testers Matrix](http://matrix.cpantesters.org)) or to derive additional data (like [regression analysis of CPAN Testers data](http://analysis.cpantesters.org))\n\nHave a question? See a problem? [Open a ticket on Github](http://github.com/cpan-testers/cpantesters-api/issues) or [contact the admins](mailto:admin@cpantesters.org)\n\n* [See the main API landing page](http://api.cpantesters.org)\n* [See the API server code on Github](http://github.com/cpan-testers/cpantesters-api)\n* [The main CPAN Testers website](http://cpantesters.org)",
     "termsOfService": "http://cpantesters.org/api/license",
     "contact": {
-      "name": "CPAN Testers core team",
       "email": "admin@cpantesters.org",
       "url": "http://cpantesters.org"
     },
     "license": {
-      "name": "perl",
+      "name": "This data is licensed under the same terms as Perl 5 itself",
       "url": "https://dev.perl.org/licenses/"
     }
   },

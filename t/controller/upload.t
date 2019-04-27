@@ -147,7 +147,7 @@ sub _test_api( $base ) {
         } );
         my $broker_t = Test::Mojo->new( $broker );
 
-        my $broker_url = $broker->ua->server->nb_url;
+        my $broker_url = $broker_t->ua->server->nb_url;
         $t->app->config->{broker} = 'ws://' . $broker_url->host_port;
 
         $t->websocket_ok( $base . '/upload' )

@@ -1,14 +1,21 @@
 language: perl
-perl:
-    - "5.24"
-    - "blead"
 
+services:
+    - docker
+
+env:
+    global:
+        - DOCKER_USERNAME=cpantestersbot
+        - DOCKER_IMAGE_NAME=cpantesters/api
+        - DOCKER_VERSION_TAG=${DOCKER_IMAGE_NAME}:${TRAVIS_BUILD_NUMBER}
+        - secure: "ZTfcW0EV8aZd30tC9tF28Gvil2UoZ4uIKsypyQzCbi/l6FlreOtaIaoe6cJd/Zuia3F4dC9rJ0hj4YfmFbUH0Tg2eYjnZZCFt6Il7WLhSzrKvL57MckWhiWk2bYGEmyfKnZ2vlMDS5C94HuooBaBkywr6++iNnRFq7zuE5t0uOEOnAmcrCj0GOhHVhRifxFXtoxKMbhvAsuMTUEA3i8u7k8N3CdMWuWPjaRvP/w28SnM37SSP/qDSEwk92IC/Zb1T6y13YKQLlfxNluKPlAuEkwoThyJSTQqo+lecVPOPYOXtgrbM1Q6tEWpzJpVXVwsadaRScsIBhBohxWzO7lDZG4drifiQSqXI8d1s3fXzGz6q8ya3859rUYXIIRemZ0goQZ33bd3Bo5Pie2UbO4qvlefJAOYeNJ4GEimjw2sXfXcWWToJDYvJPQZ2eU1KlKY917FRckXqNcV0F+rrGXroN0X7h3FQrclG3nNELM8v/8VlJoxoavywfXsxYgz3XdaUqUJFTCiB/lQNmP/pljKVhfNsYFGjEurLMkgSoJXON7ZIlFWbsr1NSQoMsRCwQVyn3v7YlmJ7/ReQcZeW1wV1u3OqqzrFuRNVoj0yA8y213/bSaJQqQsF/rNin7QEBKD/bjmXAkzypsKjGoh88yL7HSoCi0ug1nK2XUqzU9/LjI="
 matrix:
     include:
         - perl: "5.24"
+        - perl: "5.24"
           env: COVERAGE=1
-    allow_failures:
-        - perl: "blead"
+        - perl: "5.26"
+          env: BUILD_DOCKER=yes
 
 before_install:
     - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
@@ -32,3 +39,17 @@ script:
 
 after_success:
     - coverage-report
+
+deploy:
+- provider: script
+  skip_cleanup: true
+  on:
+    branch: master
+    condition: $BUILD_DOCKER = 'yes'
+  script:
+  - cd ..;
+    docker pull "$DOCKER_IMAGE_NAME" || true;
+    docker build --pull --cache-from "$DOCKER_IMAGE_NAME"
+      --tag $DOCKER_IMAGE_NAME --tag $DOCKER_VERSION_TAG .;
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+    docker push $DOCKER_IMAGE_NAME;

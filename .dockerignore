@@ -1,0 +1,6 @@
+.build
+*.tar.gz
+/CPAN-Testers-API-*
+api.conf
+api.sqlite3
+cpanfile.snapshot

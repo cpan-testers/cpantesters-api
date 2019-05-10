@@ -108,7 +108,11 @@ sub handle_post {
         sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
     );
 
-    Beam::Minion->enqueue( report => 'queue', [ $row->id ], { attempts => 10 } );
+    # Each attempts will try again after a number of seconds increasing
+    # via the fibonnacci sequence. So, 30 attempts reaches about 50,000
+    # seconds (by which point it will have waited almost 2 days for
+    # whatever problem, likely the `uploads` row missing, to resolve)
+    Beam::Minion->enqueue( report => 'queue', [ $row->id ], { attempts => 30 } );
 
     my $url = $c->req->url->clone;
     my $path = $url->path;

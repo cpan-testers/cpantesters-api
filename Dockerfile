@@ -1,10 +1,15 @@
 FROM cpantesters/schema
+# Load some modules that will always be required, to cut down on docker
+# rebuild time
 RUN cpanm -v \
     Minion::Backend::mysql \
     Beam::Minion \
     Mojolicious \
     Mojolicious::Plugin::OAuth2 \
     Mojolicious::Plugin::Yancy
+# Load last version's modules, to again cut down on rebuild time
+COPY ./cpanfile ./cpanfile
+RUN cpanm --installdeps .
 
 COPY ./ ./
 RUN dzil authordeps --missing | cpanm -v --notest

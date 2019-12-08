@@ -19,6 +19,10 @@ RUN dzil install --install-command "cpanm -v ."
 
 COPY ./etc/docker/api/my.cnf ./.cpanstats.cnf
 COPY ./etc/docker/api/api.development.conf ./
-ENV MOJO_HOME=./
+COPY ./etc/docker/legacy-metabase/metabase.conf ./
+ENV MOJO_HOME=./ \
+    BEAM_MINION='mysql+dsn+dbi:mysql:mysql_read_default_file=~/.cpanstats.cnf;mysql_read_default_group=application' \
+    MOJO_PUBSUB_EXPERIMENTAL=1 \
+    MOJO_MAX_MESSAGE_SIZE=33554432
 CMD [ "cpantesters-api", "daemon", "-l", "http://*:4000" ]
 EXPOSE 4000

@@ -15,7 +15,7 @@ use v5.24;
 use Mojo::Base '-base';
 use Mojo::File 'path';
 use Mojolicious::Lite;
-use experimental 'signatures';
+use experimental qw( signatures postderef );
 use Metabase::Fact;
 use Metabase::User::Profile;
 use Metabase::User::Secret;

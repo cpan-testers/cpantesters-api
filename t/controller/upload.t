@@ -139,7 +139,7 @@ sub _test_api( $base ) {
             push $peers->@*, $c;
             $t->app->log->info( "Added 1, Got " . ( scalar @$peers ) . " peers" );
             $_->send( 'Got topic: ' . $c->stash( 'topic' ) ) for $peers->@*;
-            $c->on( finish => sub( $c, $tx ) {
+            $c->on( finish => sub( $c, $tx, $reason ) {
                 $peers = [ grep { $_ ne $c } $peers->@* ],
                 $t->app->log->info( "Lost 1, Got " . ( scalar @$peers ) . " peers" );
             } );

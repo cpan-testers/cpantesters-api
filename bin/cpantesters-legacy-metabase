@@ -225,7 +225,7 @@ helper refresh_tail_log => sub {
         { order_by => { -desc => 'created' }, rows => 1000 },
     );
     my @reports = $rs->all;
-    $file->spurt(
+    $file->spew(
         app->build_controller->render_to_string( 'tail/log', format => 'txt', reports => \@reports )
     );
 };

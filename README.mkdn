@@ -4,11 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.026
-
-# STATUS
-
-<a href="https://travis-ci.org/cpan-testers/cpantesters-api"><img src="https://travis-ci.org/cpan-testers/cpantesters-api.svg?branch=master"></a><a href="https://coveralls.io/r/cpan-testers/cpantesters-api"><img src="https://coveralls.io/repos/cpan-testers/CPAN-Testers-API/badge.png" alt="Coverage Status" /></a>
+version 0.029
 
 # SYNOPSIS
 

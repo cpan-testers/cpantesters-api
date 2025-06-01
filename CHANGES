@@ -2,6 +2,8 @@ Changelog for CPAN-Testers-API
 
 {{ $NEXT }}
 
+0.029     2025-06-01 10:35:28-05:00 America/Chicago
+
   NOTE: Some of this is 6 years old, since apparently that's when I last
   did a CPAN release of this...
 

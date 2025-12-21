@@ -19,8 +19,6 @@ RUN --mount=type=cache,target=/root/.cpanm \
   dzil listdeps --missing | cpanm -v --notest && \
   dzil install --install-command "cpanm -v --notest ."
 
-COPY ./etc/docker/api/api.development.conf /app
-COPY ./etc/docker/legacy-metabase/metabase.conf /app
 ENV MOJO_HOME=/app \
     BEAM_MINION='mysql+dsn+dbi:MariaDB:mariadb_read_default_file=/root/.cpanstats.cnf;mariadb_read_default_group=application' \
     MOJO_PUBSUB_EXPERIMENTAL=1 \

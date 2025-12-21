@@ -70,6 +70,8 @@ L<http://www.cpantesters.org>
 =cut
 
 use Mojo::Base 'Mojolicious';
+BEGIN { $ENV{IO_ASYNC_LOOP} = "Mojo"; };
+use OpenTelemetry::SDK;
 use CPAN::Testers::API::Base;
 use Scalar::Util qw( blessed );
 use File::Share qw( dist_dir dist_file );
@@ -77,6 +79,14 @@ use Log::Any::Adapter;
 use Alien::SwaggerUI;
 use File::Spec::Functions qw( catdir catfile );
 use JSON::MaybeXS qw( encode_json );
+use Log::Any::Adapter 'Multiplex' =>
+  # Set up Log::Any to log to OpenTelemetry and Stderr so we can still
+  # see the local logs.
+  adapters => {
+    'OpenTelemetry' => [],
+    'Stderr' => [],
+  };
+use Log::Any qw($LOG);
 
 =method schema
 
@@ -91,8 +101,9 @@ L<CPAN::Testers::Schema/connect_from_config> for details.
 has schema => sub {
     my ( $app ) = @_;
     require CPAN::Testers::Schema;
-    if ( $app->config->{schema} ) {
-        return CPAN::Testers::Schema->connect( $app->config->{schema} );
+    if ( $app->config->{db} ) {
+        $app->log->info("Connecting to " . $app->config->{db}{dsn});
+        return CPAN::Testers::Schema->connect( $app->config->{db}->@{qw( dsn username password args )} );
     }
     return CPAN::Testers::Schema->connect_from_config;
 };
@@ -107,7 +118,17 @@ and registers helpers.
 =cut
 
 sub startup ( $app ) {
-    $app->log( Mojo::Log->new ); # Log only to STDERR
+    # Remove Mojo::Log from STDERR so that we don't double-log
+    $app->log(Mojo::Log->new(handle => undef));
+    # Forward Mojo::Log logs to the Log::Any logger, so that from there
+    # they will be forwarded to OpenTelemetry.
+    # Modules should prefer to log with Log::Any because it supports
+    # structured logging.
+    $app->log->on( message => sub ( $, $level, @lines ) {
+      $LOG->$level(@lines);
+    });
+    #$app->plugin('OpenTelemetry');
+
     unshift @{ $app->renderer->paths },
         catdir( dist_dir( 'CPAN-Testers-API' ), 'templates' );
     unshift @{ $app->static->paths },

@@ -198,8 +198,6 @@ sub startup ( $app ) {
     $app->helper( schema => sub { shift->app->schema } );
     $app->helper( render_error => \&render_error );
     $app->helper( stream_rs => \&stream_rs );
-
-    Log::Any::Adapter->set( 'MojoLog', logger => $app->log );
 }
 
 =method render_error

@@ -137,9 +137,16 @@ sub handle_post {
     if (my $url = $c->config->{collector}) {
       # Also write to the collector. This is the future sole destination for raw report storage.
       # At some point, we will discontinue writing to the MySQL Metabase / TestReport databases.
+      my $json = $row->report;
+
+      # Translate some things to pass validation
+      if ($json->{environment}{language}{name} eq 'Perl 5') {
+        $json->{environment}{language}{name} = 'perl';
+      }
+
       my $res;
       eval {
-        $res = $c->ua->post($url . '/v1/report/' . lc $row->id, {json => $row->report})->result;
+        $res = $c->ua->post($url . '/v1/report/' . lc $row->id, json => $row->report)->result;
       };
       if (my $e = $@ or !$res) {
         $c->log->error(

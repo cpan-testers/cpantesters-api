@@ -139,7 +139,7 @@ sub handle_post {
       # At some point, we will discontinue writing to the MySQL Metabase / TestReport databases.
       my $res;
       eval {
-        $res = $c->ua->post($url . '/v1/report', {json => $row->report})->result;
+        $res = $c->ua->post($url . '/v1/report/' . lc $row->id, {json => $row->report})->result;
       };
       if (my $e = $@ or !$res) {
         $c->log->error(

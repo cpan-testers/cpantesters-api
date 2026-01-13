@@ -50,6 +50,13 @@ to the database.
 To create a database for local testing (C<-m local>), install the latest
 CPAN Testers schema using: C<< cpantesters-schema install dbi:SQLite:local.db >>.
 
+=head2 collector
+
+  collector => 'http://collector.default.svc',
+
+If present, will also ship a re-formatted report to a L<CPAN::Testers::Collector> instance
+at the given URL.
+
 =cut
 
 # Remove Mojo::Log from STDERR so that we don't double-log
@@ -122,10 +129,34 @@ sub handle_post {
     }
 
     my $fact = Metabase::Fact->from_json( $c->req->body );
-    my $row = $c->schema->resultset( 'TestReport' )->insert_metabase_fact( $fact );
-    $c->app->log->info(
-        sprintf 'Wrote report %s from %s (%s)', $row->id, $user->fullname, $user->email,
+    my $rs = $c->schema->resultset( 'TestReport' );
+    my $row = $rs->insert_metabase_fact( $fact );
+    $c->log->info(
+        sprintf 'Wrote to database report %s from %s (%s)', $row->id, $user->fullname, $user->email,
     );
+    if (my $url = $c->config->{collector}) {
+      # Also write to the collector. This is the future sole destination for raw report storage.
+      # At some point, we will discontinue writing to the MySQL Metabase / TestReport databases.
+      my $res;
+      eval {
+        $res = $c->ua->post($url . '/v1/report', {json => $row->report})->result;
+      };
+      if (my $e = $@ or !$res) {
+        $c->log->error(
+            sprintf 'Error writing to collector (%s): %s', $row->id, $e // 'No response',
+        );
+      }
+      elsif ($res->is_error) {
+        $c->log->error(
+            sprintf 'Error response from collector (%s): %s%s', $row->id, $res->message, "\n".$res->body//"",
+        );
+      }
+      else {
+        $c->log->info(
+            sprintf 'Wrote to collector report %s from %s (%s)', $row->id, $user->fullname, $user->email,
+        );
+      }
+    }
 
     # Each attempts will try again after a number of seconds increasing
     # via the fibonnacci sequence. So, 30 attempts reaches about 50,000
@@ -239,6 +270,7 @@ get '/tail/log' => [ format => [qw( txt )] ], sub( $c ) {
 
 helper refresh_tail_log => sub {
     my $file = app->home->child( 'tail', 'log.txt' );
+    $file->dirname->make_path;
     my $rs = app->schema->resultset( 'TestReport' )->search(
         { 'report' => \'->>"$.environment.language.name" = "Perl 5"' },
         { order_by => { -desc => 'created' }, rows => 1000 },

@@ -11,7 +11,8 @@ our $VERSION = '0.030';
 =cut
 
 package CPANTesters::Web::Legacy::Metabase;
-use v5.24;
+use builtin ':5.40';
+use OpenTelemetry::SDK;
 use Mojo::Base '-base';
 use Mojo::File 'path';
 use Mojolicious::Lite;
@@ -25,6 +26,14 @@ use CPAN::Testers::Schema;
 use Mojo::Util qw( b64_decode );
 use Beam::Minion;
 use Data::Dumper;
+use Log::Any qw($LOG);
+use Log::Any::Adapter 'Multiplex' =>
+  # Set up Log::Any to log to OpenTelemetry and Stderr so we can still
+  # see the local logs.
+  adapters => {
+    'OpenTelemetry' => [],
+    'Stderr' => [],
+  };
 
 =head1 CONFIG
 
@@ -43,7 +52,17 @@ CPAN Testers schema using: C<< cpantesters-schema install dbi:SQLite:local.db >>
 
 =cut
 
-app->log( Mojo::Log->new ); # Log only to STDERR
+# Remove Mojo::Log from STDERR so that we don't double-log
+app->log(Mojo::Log->new(handle => undef));
+# Forward Mojo::Log logs to the Log::Any logger, so that from there
+# they will be forwarded to OpenTelemetry.
+# Modules should prefer to log with Log::Any because it supports
+# structured logging.
+app->log->on( message => sub ( $, $level, @lines ) {
+  $LOG->$level(@lines);
+});
+
+app->plugin('OpenTelemetry');
 app->home( path( $FindBin::Bin )->dirname ) unless $ENV{MOJO_HOME};
 app->moniker( 'metabase' );
 my $root_conf = app->home->child( sprintf 'etc/%s.conf', app->moniker );

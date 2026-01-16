@@ -16,26 +16,26 @@
   },
   "host": "api.cpantesters.org",
   "basePath": "/v3",
-  "schemes": [ "http" ],
-  "consumes": [ "application/json" ],
-  "produces": [ "application/json" ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "tags": [
-      {
-          "name": "Summary",
-          "description": "Summary test report data"
-      },
-      {
-          "name": "Release",
-          "description": "Per-release test summary data"
-      },
-      {
-          "name": "Upload",
-          "description": "CPAN uploads data"
-      },
-      {
-          "name": "Report",
-          "description": "CPAN report submissions"
-      }
+    {
+      "name": "Summary",
+      "description": "Summary test report data"
+    },
+    {
+      "name": "Release",
+      "description": "Per-release test summary data"
+    },
+    {
+      "name": "Upload",
+      "description": "CPAN uploads data"
+    },
+    {
+      "name": "Report",
+      "description": "CPAN report submissions"
+    }
   ],
 
   "paths": {
@@ -48,12 +48,14 @@
           "action": "report_post"
         },
         "operationId": "v3_report_post",
-        "parameters": [{
-          "name": "report",
-          "in": "body",
-          "required": true,
-          "schema": { "$ref": "#/definitions/NewReport" }
-        }],
+        "parameters": [
+          {
+            "name": "report",
+            "in": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/NewReport" }
+          }
+        ],
         "responses": {
           "201": {
             "description": "report was created",
@@ -88,13 +90,15 @@
           "action": "report_get"
         },
         "operationId": "v3_report_get",
-        "parameters": [{
-          "name": "id",
-          "in": "path",
-          "description": "The CPAN Testers report id (like 01be7be2-2aec-11e7-a074-e1beba07c9dd)",
-          "type": "string",
-          "required": true
-        }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The CPAN Testers report id (like 01be7be2-2aec-11e7-a074-e1beba07c9dd)",
+            "type": "string",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Report details",
@@ -114,7 +118,7 @@
 
     "/summary": {
       "get": {
-        "tags": [ "Summary" ],
+        "tags": ["Summary"],
         "operationId": "v3_summary_all",
         "summary": "Get test report summary info with various filters. One of either 'perl' or 'osname' must be provided.",
         "x-mojo-to": {
@@ -130,12 +134,12 @@
         ],
         "responses": {
           "200": {
-             "description": "The summary results",
-             "schema": {
-               "type": "array",
-               "title": "SummaryArray",
-               "items": { "$ref": "#/definitions/ReportSummary" }
-             }
+            "description": "The summary results",
+            "schema": {
+              "type": "array",
+              "title": "SummaryArray",
+              "items": { "$ref": "#/definitions/ReportSummary" }
+            }
           },
           "400": {
             "description": "You did not provide one of 'perl' or 'osname' query parameters",
@@ -155,7 +159,7 @@
 
     "/summary/{dist}": {
       "get": {
-        "tags": [ "Summary" ],
+        "tags": ["Summary"],
         "operationId": "v3_summary_dist",
         "summary": "Get test report summary info for a specific distribution",
         "x-mojo-to": {
@@ -178,12 +182,12 @@
         ],
         "responses": {
           "200": {
-             "description": "The summary results",
-             "schema": {
-               "type": "array",
-               "title": "SummaryArray",
-               "items": { "$ref": "#/definitions/ReportSummary" }
-             }
+            "description": "The summary results",
+            "schema": {
+              "type": "array",
+              "title": "SummaryArray",
+              "items": { "$ref": "#/definitions/ReportSummary" }
+            }
           },
           "500": {
             "description": "We were unable to get the test summaries",
@@ -199,7 +203,7 @@
 
     "/summary/{dist}/{version}": {
       "get": {
-        "tags": [ "Summary" ],
+        "tags": ["Summary"],
         "operationId": "v3_summary",
         "summary": "Get test report summary info for a specific version of a distribution",
         "x-mojo-to": {
@@ -230,12 +234,12 @@
         ],
         "responses": {
           "200": {
-             "description": "The summary results",
-             "schema": {
-               "type": "array",
-               "title": "SummaryArray",
-               "items": { "$ref": "#/definitions/ReportSummary" }
-             }
+            "description": "The summary results",
+            "schema": {
+              "type": "array",
+              "title": "SummaryArray",
+              "items": { "$ref": "#/definitions/ReportSummary" }
+            }
           },
           "500": {
             "description": "We were unable to get the test summaries",
@@ -250,33 +254,33 @@
     },
 
     "/release": {
-     "get": {
-       "tags": [ "Release" ],
-       "operationId": "v3_release_all",
-       "summary": "Get summary test report info about all CPAN releases",
-       "x-mojo-to": {
-         "controller": "Release",
-         "action": "release"
-       },
-       "responses": {
-         "400": {
-           "description": "The request or parameters are incorrect"
-         },
-         "200": {
-           "description": "A list of release objects",
-           "schema": {
-             "type": "array",
-             "title": "ReleasesArray",
-             "items": { "$ref": "#/definitions/Release" }
-           }
-         }
-       }
-     }
+      "get": {
+        "tags": ["Release"],
+        "operationId": "v3_release_all",
+        "summary": "Get summary test report info about all CPAN releases",
+        "x-mojo-to": {
+          "controller": "Release",
+          "action": "release"
+        },
+        "responses": {
+          "400": {
+            "description": "The request or parameters are incorrect"
+          },
+          "200": {
+            "description": "A list of release objects",
+            "schema": {
+              "type": "array",
+              "title": "ReleasesArray",
+              "items": { "$ref": "#/definitions/Release" }
+            }
+          }
+        }
+      }
     },
 
     "/release/dist/{dist}": {
       "get": {
-        "tags": [ "Release" ],
+        "tags": ["Release"],
         "operationId": "v3_release_dist",
         "summary": "Get summary test report info for releases of a distribution",
         "x-mojo-to": {
@@ -307,7 +311,7 @@
 
     "/release/dist/{dist}/{version}": {
       "get": {
-        "tags": [ "Release" ],
+        "tags": ["Release"],
         "operationId": "v3_release_dist_version",
         "summary": "Get summary test report info for a single release of a distribution",
         "x-mojo-to": {
@@ -335,21 +339,21 @@
           }
         ],
         "responses": {
-            "200": {
-                "description": "The release information",
-                "schema": { "$ref": "#/definitions/Release" }
-            },
-            "400": { "$ref": "#/paths/~1release/get/responses/400" },
-            "404": {
-                "description": "The distribution or version was not found"
-            }
+          "200": {
+            "description": "The release information",
+            "schema": { "$ref": "#/definitions/Release" }
+          },
+          "400": { "$ref": "#/paths/~1release/get/responses/400" },
+          "404": {
+            "description": "The distribution or version was not found"
+          }
         }
       }
     },
 
     "/release/author/{author}": {
       "get": {
-        "tags": [ "Release" ],
+        "tags": ["Release"],
         "operationId": "v3_release_author",
         "summary": "Get summary test report info for releases by an author",
         "x-mojo-to": {
@@ -380,7 +384,7 @@
 
     "/upload": {
       "get": {
-        "tags": [ "Upload" ],
+        "tags": ["Upload"],
         "operationId": "v3_upload_all",
         "summary": "Get all uploads to CPAN",
         "description": "This route gets uploads to CPAN. Asking for a WebSocket will subscribe to a feed of new uploads.",
@@ -411,7 +415,7 @@
 
     "/upload/dist/{dist}": {
       "get": {
-        "tags": [ "Upload" ],
+        "tags": ["Upload"],
         "operationId": "v3_upload_dist",
         "summary": "Get uploads for a dist",
         "description": "This route gets uploads to CPAN for a specific distribution. Asking for a WebSocket will subscribe to a feed of new uploads.",
@@ -443,7 +447,7 @@
 
     "/upload/author/{author}": {
       "get": {
-        "tags": [ "Upload" ],
+        "tags": ["Upload"],
         "operationId": "v3_upload_author",
         "summary": "Get uploads for an author",
         "description": "This route gets uploads to CPAN for the specific author. Asking for a WebSocket will subscribe to a feed of new uploads.",
@@ -496,30 +500,30 @@
       "description": "Only send up to a maximum of the given number of records"
     },
     "grade": {
-        "name": "grade",
-        "in": "query",
-        "description": "Filter results by grade",
-        "type": "string",
-        "enum": [ "pass", "fail", "na", "unknown" ],
-        "required": false
+      "name": "grade",
+      "in": "query",
+      "description": "Filter results by grade",
+      "type": "string",
+      "enum": ["pass", "fail", "na", "unknown"],
+      "required": false
     },
     "perl": {
-        "name": "perl",
-        "in": "query",
-        "description": "One or more Perl versions to return data for.",
-        "type": "array",
-        "items": { "type": "string" },
-        "collectionFormat": "multi",
-        "required": false
+      "name": "perl",
+      "in": "query",
+      "description": "One or more Perl versions to return data for.",
+      "type": "array",
+      "items": { "type": "string" },
+      "collectionFormat": "multi",
+      "required": false
     },
     "osname": {
-        "name": "osname",
-        "in": "query",
-        "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
-        "type": "array",
-        "items": { "type": "string" },
-        "collectionFormat": "multi",
-        "required": false
+      "name": "osname",
+      "in": "query",
+      "description": "One or more OS names to return data for. The OS name is 'osname' in Config or the '$^O' special variable. Some examples: 'linux' (Linux), 'mswin32' (Windows), 'darwin' (MacOS)",
+      "type": "array",
+      "items": { "type": "string" },
+      "collectionFormat": "multi",
+      "required": false
     },
     "perl_maturity": {
       "name": "perl_maturity",
@@ -533,13 +537,13 @@
   "definitions": {
     "NewReport": {
       "type": "object",
-      "required": [ "reporter", "environment", "distribution", "result" ],
+      "required": ["reporter", "environment", "distribution", "result"],
       "properties": {
-        "reporter":     { "$ref": "#/definitions/Reporter" },
-        "environment":  { "$ref": "#/definitions/Environment" },
+        "reporter": { "$ref": "#/definitions/Reporter" },
+        "environment": { "$ref": "#/definitions/Environment" },
         "distribution": { "$ref": "#/definitions/Distribution" },
-        "result":       { "$ref": "#/definitions/Result" },
-        "comments":     {}
+        "result": { "$ref": "#/definitions/Result" },
+        "comments": {}
       }
     },
     "Report": {
@@ -550,8 +554,8 @@
           "type": "object",
           "required": ["id"],
           "properties": {
-              "id": { "type": "string" },
-              "created": { "type": "string" }
+            "id": { "type": "string" },
+            "created": { "type": "string" }
           }
         }
       ]
@@ -560,7 +564,7 @@
       "type": "object",
       "required": ["email"],
       "properties": {
-        "name":  { "type": "string" },
+        "name": { "type": "string" },
         "email": { "type": "string" }
       }
     },
@@ -586,9 +590,9 @@
           "type": "string",
           "enum": ["Perl 5", "Perl 6"]
         },
-        "archname":  { "type": "string" },
-        "build":     { "type": "string" },
-        "version":   { "type": "string" },
+        "archname": { "type": "string" },
+        "build": { "type": "string" },
+        "version": { "type": "string" },
         "variables": {
           "type": "object",
           "additionalProperties": { "type": "string" }
@@ -605,8 +609,8 @@
           "required": ["version"],
           "properties": {
             "version": {
-                "type": "string",
-                "pattern": "^5\\.\\d+\\.\\d+"
+              "type": "string",
+              "pattern": "^5\\.\\d+\\.\\d+"
             },
             "commit_id": { "type": "string" }
           }
@@ -625,7 +629,7 @@
             "backend": {
               "type": "object",
               "properties": {
-                "engine":  { "type": "string" },
+                "engine": { "type": "string" },
                 "version": { "type": "string" }
               }
             }
@@ -637,13 +641,13 @@
       "type": "object",
       "required": ["osname"],
       "properties": {
-        "osname":          { "type": "string" },
-        "osversion":       { "type": "string" },
-        "hostname":        { "type": "string" },
-        "cpu_count":       { "type": "string" },
-        "cpu_type":        { "type": "string" },
+        "osname": { "type": "string" },
+        "osversion": { "type": "string" },
+        "hostname": { "type": "string" },
+        "cpu_count": { "type": "string" },
+        "cpu_type": { "type": "string" },
         "cpu_description": { "type": "string" },
-        "filesystem":      { "type": "string" },
+        "filesystem": { "type": "string" },
         "variables": {
           "type": "object",
           "additionalProperties": { "type": "string" }
@@ -655,10 +659,10 @@
       "required": ["grade", "output"],
       "properties": {
         "grade": { "$ref": "#/definitions/Grade" },
-        "tests":    { "type": "integer", "minimum": 0 },
+        "tests": { "type": "integer", "minimum": 0 },
         "failures": { "type": "integer", "minimum": 0 },
-        "skipped":  { "type": "integer", "minimum": 0 },
-        "todo":     {
+        "skipped": { "type": "integer", "minimum": 0 },
+        "todo": {
           "type": "object",
           "required": ["pass", "fail"],
           "properties": {
@@ -675,7 +679,7 @@
       "type": "object",
       "required": ["name", "version"],
       "properties": {
-        "name":    { "type": "string" },
+        "name": { "type": "string" },
         "version": { "type": "string" },
         "prerequisites": {
           "description": "A list of prerequisites",
@@ -691,10 +695,10 @@
       "description": "At least one of the properties must be set",
       "properties": {
         "uncategorized": { "type": "string" },
-        "configure":     { "type": "string" },
-        "build":         { "type": "string" },
-        "test":          { "type": "string" },
-        "install":       { "type": "string" }
+        "configure": { "type": "string" },
+        "build": { "type": "string" },
+        "test": { "type": "string" },
+        "install": { "type": "string" }
       }
     },
     "Prerequisite": {
@@ -702,9 +706,9 @@
       "required": ["phase", "name", "need"],
       "properties": {
         "phase": { "type": "string" },
-        "name":  { "type": "string" },
-        "need":  { "type": "string" },
-        "have":  { "type": "string" }
+        "name": { "type": "string" },
+        "need": { "type": "string" },
+        "have": { "type": "string" }
       }
     },
     "AcceptedReports": {
@@ -724,8 +728,14 @@
           "items": {
             "required": ["message"],
             "properties": {
-              "message": { "type": "string", "description": "Human readable description of the error" },
-              "path": { "type": "string", "description": "JSON pointer to the input data where the error occur" }
+              "message": {
+                "type": "string",
+                "description": "Human readable description of the error"
+              },
+              "path": {
+                "type": "string",
+                "description": "JSON pointer to the input data where the error occur"
+              }
             }
           }
         }
@@ -775,48 +785,48 @@
     },
 
     "ReportSummary": {
-        "type": "object",
-        "title": "ReportSummary",
-        "description": "Flattened summary data from the test report data structure",
-        "properties": {
-            "guid": {
-                "type": "string",
-                "description": "The GUID of the full report this data came from"
-            },
-            "date": {
-                "type": "string",
-                "description": "The date/time of the report in ISO8601 format"
-            },
-            "grade": { "$ref": "#/definitions/Grade" },
-            "reporter": {
-                "type": "string",
-                "description": "The name/email of the reporter who submitted this report"
-            },
-            "dist": {
-                "type": "string",
-                "description": "The name of the distribution tested"
-            },
-            "version": {
-                "type": "string",
-                "description": "The version of the distribution tested"
-            },
-            "platform": {
-                "type": "string",
-                "description": "The Perl platform that ran the tests, like 'x86_64-linux'"
-            },
-            "perl": {
-                "type": "string",
-                "description": "The Perl version that ran the tests, like '5.24.0'"
-            },
-            "osname": {
-                "type": "string",
-                "description": "The name of the operating system, like 'linux', 'MSWin32', 'darwin'"
-            },
-            "osvers": {
-                "type": "string",
-                "description": "The version of the operating system, like '4.8.0-2-amd64'"
-            }
+      "type": "object",
+      "title": "ReportSummary",
+      "description": "Flattened summary data from the test report data structure",
+      "properties": {
+        "guid": {
+          "type": "string",
+          "description": "The GUID of the full report this data came from"
+        },
+        "date": {
+          "type": "string",
+          "description": "The date/time of the report in ISO8601 format"
+        },
+        "grade": { "$ref": "#/definitions/Grade" },
+        "reporter": {
+          "type": "string",
+          "description": "The name/email of the reporter who submitted this report"
+        },
+        "dist": {
+          "type": "string",
+          "description": "The name of the distribution tested"
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the distribution tested"
+        },
+        "platform": {
+          "type": "string",
+          "description": "The Perl platform that ran the tests, like 'x86_64-linux'"
+        },
+        "perl": {
+          "type": "string",
+          "description": "The Perl version that ran the tests, like '5.24.0'"
+        },
+        "osname": {
+          "type": "string",
+          "description": "The name of the operating system, like 'linux', 'MSWin32', 'darwin'"
+        },
+        "osvers": {
+          "type": "string",
+          "description": "The version of the operating system, like '4.8.0-2-amd64'"
         }
+      }
     },
 
     "Upload": {

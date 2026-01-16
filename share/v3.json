@@ -552,7 +552,6 @@
         { "$ref": "#/definitions/NewReport" },
         {
           "type": "object",
-          "required": ["id"],
           "properties": {
             "id": { "type": "string" },
             "created": { "type": "string" }

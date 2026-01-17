@@ -71,7 +71,7 @@ L<http://www.cpantesters.org>
 
 use Mojo::Base 'Mojolicious';
 BEGIN { $ENV{IO_ASYNC_LOOP} = "Mojo"; };
-use OpenTelemetry::SDK;
+#use OpenTelemetry::SDK;
 use CPAN::Testers::API::Base;
 use Scalar::Util qw( blessed );
 use File::Share qw( dist_dir dist_file );

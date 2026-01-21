@@ -34,6 +34,8 @@ use Log::Any::Adapter 'Multiplex' =>
     'OpenTelemetry' => [],
     'Stderr' => [],
   };
+use IO::Async::Function;
+use IO::Async::Loop::Mojo;
 
 =head1 CONFIG
 
@@ -76,6 +78,33 @@ my $root_conf = app->home->child( sprintf 'etc/%s.conf', app->moniker );
 plugin Config => (
     file => $ENV{MOJO_CONFIG} || $root_conf,
 );
+
+# Write a report to the old database tables in the background, ignoring errors.
+# This is temporary until I can absolutely verify the collector is the only
+# place where we are looking for test reports.
+helper write_report => sub ($c, $fact) {
+  state $func;
+  if (!$func) {
+    my $loop = IO::Async::Loop::Mojo->new;
+    $func = IO::Async::Function->new(
+      module => 'CPAN::Testers::API::Metabase',
+      func => 'write_report',
+      model => 'spawn',
+      max_workers => 1,
+    );
+    $loop->add( $func );
+    $func->start;
+  }
+  $func->call(
+    args => [$c->app->config, $fact->as_struct],
+    on_return => sub($row) {
+      $c->log->info( 'Wrote report to database', { guid => $row->{id} });
+    },
+    on_error => sub($error, @values) {
+      $c->log->error( 'Error writing report to database', @values, { error => $error } );
+    },
+  );
+};
 
 get '/' => 'index';
 
@@ -130,14 +159,11 @@ sub handle_post {
 
     my $fact = Metabase::Fact->from_json( $c->req->body );
     my $rs = $c->schema->resultset( 'TestReport' );
-    my $row = $rs->insert_metabase_fact( $fact );
-    $c->log->info(
-        sprintf 'Wrote to database report %s from %s (%s)', $row->id, $user->fullname, $user->email,
-    );
+    my $row = $rs->convert_metabase_report( $fact );
     if (my $url = $c->config->{collector}) {
       # Also write to the collector. This is the future sole destination for raw report storage.
       # At some point, we will discontinue writing to the MySQL Metabase / TestReport databases.
-      my $json = $row->report;
+      my $json = $row->{report};
 
       # Translate some things to pass validation
       if ($json->{environment}{language}{name} eq 'Perl 5') {
@@ -146,21 +172,21 @@ sub handle_post {
 
       my $res;
       eval {
-        $res = $c->ua->post($url . '/v1/report/' . lc $row->id, json => $row->report)->result;
+        $res = $c->ua->post($url . '/v1/report/' . lc $row->{id}, json => $row->{report})->result;
       };
       if (my $e = $@ or !$res) {
         $c->log->error(
-            sprintf 'Error writing to collector (%s): %s', $row->id, $e // 'No response',
+            sprintf 'Error writing to collector (%s): %s', $row->{id}, $e // 'No response',
         );
       }
       elsif ($res->is_error) {
         $c->log->error(
-            sprintf 'Error response from collector (%s): %s%s', $row->id, $res->message, "\n".$res->body//"",
+            sprintf 'Error response from collector (%s): %s%s', $row->{id}, $res->message, "\n".$res->body//"",
         );
       }
       else {
         $c->log->info(
-            sprintf 'Wrote to collector report %s from %s (%s)', $row->id, $user->fullname, $user->email,
+            sprintf 'Wrote to collector report %s from %s (%s)', $row->{id}, $user->fullname, $user->email,
         );
       }
     }
@@ -169,17 +195,22 @@ sub handle_post {
     # via the fibonnacci sequence. So, 30 attempts reaches about 50,000
     # seconds (by which point it will have waited almost 2 days for
     # whatever problem, likely the `uploads` row missing, to resolve)
-    Beam::Minion->enqueue( report => 'queue', [ $row->id ], { attempts => 30 } );
-    $c->log->info( sprintf 'Queued Minion job for %s', $row->id );
+    Beam::Minion->enqueue( report => 'queue', [ $row->{id} ], { attempts => 30 } );
+    $c->log->info( sprintf 'Queued Minion job for %s', $row->{id} );
+
+    # Try to write to the old metabase / TestReport table, but don't try too hard.
+    # Everything is using the collector now, so this is just a backup.
+    $fact->close;
+    $c->write_report($fact);
 
     my $url = $c->req->url->clone;
     my $path = $url->path;
-    splice $path->@*, -2, 2, 'guid', $row->id;
+    splice $path->@*, -2, 2, 'guid', $row->{id};
     $c->res->headers->location( $url );
 
     return $c->render(
         status => 201,
-        json => { guid => $row->id },
+        json => { guid => $row->{id} },
     );
 };
 

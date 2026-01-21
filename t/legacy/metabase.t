@@ -36,11 +36,16 @@ my $t = Test::Mojo->new;
 
 ok !-f $t->app->home->child( 'tail.lock' ), 'lock not created';
 
-my $schema = $t->app->schema(
-    CPAN::Testers::Schema->connect(
-        $mysqld->dsn(dbname => 'test'), undef, undef, { ignore_version => 1 },
-    )
+my %config_db = (
+  dsn => $mysqld->dsn(dbname => 'test'),
+  user => undef,
+  pass => undef,
+  args => { ignore_version => 1 },
 );
+my $schema = $t->app->schema(
+    CPAN::Testers::Schema->connect( @config_db{qw( dsn user pass args )} )
+);
+$t->app->config->{db} = \%config_db;
 $schema->deploy;
 
 subtest 'post report' => sub {
@@ -96,7 +101,14 @@ subtest 'post report' => sub {
           ->header_is( Location => '/api/v1/guid/' . $guid )
           ->json_is( { guid => $guid } );
 
+        my $count = 0;
         my $row = $schema->resultset( 'TestReport' )->find( $guid );
+        while (!$row && $count < 20) {
+          $count++;
+          IO::Async::Loop::Mojo->new->loop_once;
+          $row = $schema->resultset( 'TestReport' )->find( $guid );
+        }
+
         ok $row, 'row found by guid';
         is $row->created . 'Z', $given_report->core_metadata->{creation_time}, 'created is correct';
 

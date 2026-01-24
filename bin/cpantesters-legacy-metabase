@@ -26,6 +26,7 @@ use CPAN::Testers::Schema;
 use Mojo::Util qw( b64_decode );
 use Beam::Minion;
 use Data::Dumper;
+use Time::Piece;
 use Log::Any qw($LOG);
 use Log::Any::Adapter 'Multiplex' =>
   # Set up Log::Any to log to OpenTelemetry and Stderr so we can still
@@ -169,6 +170,12 @@ sub handle_post {
       if ($json->{environment}{language}{name} eq 'Perl 5') {
         $json->{environment}{language}{name} = 'perl';
       }
+      $json->{id} = lc $row->{id};
+      $json->{created} = $row->{created} || gmtime->datetime;
+      if ($json->{created} !~ /Z$/) {
+        $json->{created} .= 'Z';
+      }
+      $c->log->info( sprintf 'Writing to collector %s (%s)', $json->{id}, $json->{created} );
 
       my $res;
       eval {

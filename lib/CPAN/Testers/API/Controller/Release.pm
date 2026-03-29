@@ -22,6 +22,7 @@ has for each version released, this is the best API.
 
 use Mojo::Base 'Mojolicious::Controller';
 use CPAN::Testers::API::Base;
+use JSON::MaybeXS qw( encode_json );
 
 =method release
 
@@ -85,6 +86,12 @@ releases) are not included.
 sub release( $c ) {
     $c->openapi->valid_input or return;
 
+    my $limit = $c->param( 'limit' );
+    # OpenAPI spec doesn't support property "minimum" on parameters
+    if ( $limit and $limit < 1 ) {
+        return $c->render_error( 400 => 'The value for "limit" must be a positive integer' );
+    }
+
     my $rs = $c->schema->resultset( 'Release' );
     $rs = $rs->search(
         {
@@ -95,6 +102,7 @@ sub release( $c ) {
             columns => [qw( dist version pass fail na unknown )],
             # Only get hashrefs out
             result_class => 'DBIx::Class::ResultClass::HashRefInflator',
+            (rows => $limit)x!!$limit,
         }
     );
 
@@ -111,18 +119,10 @@ sub release( $c ) {
         $rs = $rs->maturity( $maturity );
     }
 
-    my @results;
-    my $limit = $c->param( 'limit' );
-    # OpenAPI spec doesn't support property "minimum" on parameters
-    if ( $limit and $limit < 1 ) {
-        return $c->render_error( 400 => 'The value for "limit" must be a positive integer' );
-    }
-    if ( $limit ) {
-        $rs = $rs->slice( 0, $limit - 1 );
-    }
-
+    my $cache_key = 'release';
     if ( my $dist = $c->validation->param( 'dist' ) ) {
         my $version = $c->validation->param( 'version' );
+        $cache_key .= sprintf '[%s@%s]', $dist, $version // '*';
         $rs = $rs->by_dist( $dist, $version );
         if ( $version ) {
             my $data = $rs->first || return $c->render_error( 404, 'Not found' );
@@ -130,10 +130,23 @@ sub release( $c ) {
         }
     }
     elsif ( my $author = $c->validation->param( 'author' ) ) {
+        $cache_key .= ':' . $author;
         $rs = $rs->by_author( $author );
     }
 
-    return $c->stream_rs( $rs );
+    # Allow a 'precache' parameter to replace a cache entry _before_ it
+    # expires. This way we can pre-build an expensive page before someone
+    # requests it.
+    if (!$c->param('precache') and my $json = $c->app->cache->get($cache_key)) {
+      $c->log->debug('Cache hit ' . $cache_key);
+      $c->res->headers->content_type('application/json');
+      return $c->render( format => 'json', data => $json );
+    }
+
+    # Stream the resultset, and collect the data to store in the cache
+    my @results;
+    $c->stream_rs( $rs, sub($row) { push @results, $row; $row } );
+    $c->app->cache->set($cache_key, encode_json(\@results));
 }
 
 1;

@@ -23,7 +23,9 @@ like:
     # api.conf
     {
         broker => 'ws://127.0.0.1:5000',
-        schema => 'dbi:SQLite:api.db',
+        db => 'dbi:SQLite:api.db',
+        collector => 'http://collector.cpantesters.org',
+        cache => { driver => 'FastMmap', root_dir => '/tmp/cache' },
     }
 
 The possible configuration keys are below:
@@ -35,10 +37,20 @@ The possible configuration keys are below:
 The URL to a L<Mercury> message broker, starting with C<ws://>. This
 broker is used to forward messages to every connected user.
 
-=item schema
+=item db
 
 The DBI connect string to give to L<CPAN::Testers::Schema>. If not specified,
 will use L<CPAN::Testers::Schema/connect_from_config>.
+
+=item collector
+
+The L<CPAN::Testers::Collector> instance to use for reading/writing raw
+reports.
+
+=item cache
+
+A hashref of constructor arguments for L<CHI>. If not specified, caching will
+be disabled.
 
 =back
 
@@ -49,7 +61,7 @@ to configure a SQLite schema:
 
     # api.conf
     {
-        schema => 'dbi:SQLite:api.sqlite3'
+        db => 'dbi:SQLite:api.sqlite3'
     }
 
 For the L<CPAN::Testers::Schema> to work with SQLite, you will need to
@@ -79,6 +91,7 @@ use Log::Any::Adapter;
 use Alien::SwaggerUI;
 use File::Spec::Functions qw( catdir catfile );
 use JSON::MaybeXS qw( encode_json );
+use CHI;
 use Log::Any::Adapter 'Multiplex' =>
   # Set up Log::Any to log to OpenTelemetry and Stderr so we can still
   # see the local logs.
@@ -106,6 +119,31 @@ has schema => sub {
         return CPAN::Testers::Schema->connect( $app->config->{db}->@{qw( dsn username password args )} );
     }
     return CPAN::Testers::Schema->connect_from_config;
+};
+
+=method cache
+
+Get the cache, a L<CHI> object. If the C<cache> key in the config is not set, 
+a L<CHI::Driver::Null> cache will be returned.
+
+=cut
+
+has cache => sub {
+  my ( $app ) = @_;
+  state $chi;
+  return $chi if $chi;
+  if (my $conf = $app->config->{cache}) {
+    $chi = CHI->new(
+      expires_in => '4h', # Expire a key by default after 4 hours
+      expires_variance => 0.1, # Expire a key in +/- 10% of its lifetime
+      expire_on_backend => 1.25, # Set backend's expiration for key to 125% of actual
+      %{$conf},
+    );
+  }
+  else {
+    $chi = CHI->new( driver => 'Null' );
+  }
+  return $chi;
 };
 
 =method startup

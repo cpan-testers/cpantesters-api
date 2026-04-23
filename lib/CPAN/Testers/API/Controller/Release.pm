@@ -94,10 +94,7 @@ sub release( $c ) {
 
     my $rs = $c->schema->resultset( 'Release' );
     $rs = $rs->search(
-        {
-            perlmat => 1, # only stable perls
-            patched => 1, # not patched perls
-        },
+        {},
         {
             columns => [qw( dist version pass fail na unknown )],
             # Only get hashrefs out

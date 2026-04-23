@@ -4,7 +4,7 @@ CPAN::Testers::API - REST API for CPAN Testers data
 
 # VERSION
 
-version 0.029
+version 0.030
 
 # SYNOPSIS
 
@@ -26,6 +26,11 @@ various aggregate test reporting.
 Get the schema, a [CPAN::Testers::Schema](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ASchema) object. By default, the
 schema is connected from the local user's config. See
 ["connect\_from\_config" in CPAN::Testers::Schema](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ASchema#connect_from_config) for details.
+
+## cache
+
+Get the cache, a [CHI](https://metacpan.org/pod/CHI) object. If the `cache` key in the config is not set, 
+a [CHI::Driver::Null](https://metacpan.org/pod/CHI%3A%3ADriver%3A%3ANull) cache will be returned.
 
 ## startup
 
@@ -95,7 +100,9 @@ like:
     # api.conf
     {
         broker => 'ws://127.0.0.1:5000',
-        schema => 'dbi:SQLite:api.db',
+        db => 'dbi:SQLite:api.db',
+        collector => 'http://collector.cpantesters.org',
+        cache => { driver => 'FastMmap', root_dir => '/tmp/cache' },
     }
 
 The possible configuration keys are below:
@@ -105,10 +112,20 @@ The possible configuration keys are below:
     The URL to a [Mercury](https://metacpan.org/pod/Mercury) message broker, starting with `ws://`. This
     broker is used to forward messages to every connected user.
 
-- schema
+- db
 
     The DBI connect string to give to [CPAN::Testers::Schema](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ASchema). If not specified,
     will use ["connect\_from\_config" in CPAN::Testers::Schema](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ASchema#connect_from_config).
+
+- collector
+
+    The [CPAN::Testers::Collector](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ACollector) instance to use for reading/writing raw
+    reports.
+
+- cache
+
+    A hashref of constructor arguments for [CHI](https://metacpan.org/pod/CHI). If not specified, caching will
+    be disabled.
 
 # LOCAL TESTING
 
@@ -117,7 +134,7 @@ to configure a SQLite schema:
 
     # api.conf
     {
-        schema => 'dbi:SQLite:api.sqlite3'
+        db => 'dbi:SQLite:api.sqlite3'
     }
 
 For the [CPAN::Testers::Schema](https://metacpan.org/pod/CPAN%3A%3ATesters%3A%3ASchema) to work with SQLite, you will need to

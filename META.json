@@ -4,7 +4,7 @@
       "Doug Bell <preaction@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 6.033, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Dist::Zilla version 6.036, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -32,25 +32,40 @@
       },
       "runtime" : {
          "recommends" : {
-            "DateTime" : "0"
+            "DBD::SQLite" : "0",
+            "Data::UUID" : "0",
+            "DateTime" : "0",
+            "DateTime::Format::SQLite" : "0",
+            "JSON::XS" : "0",
+            "Moose" : "0",
+            "Sereal" : "0",
+            "Sereal::Decoder" : "0",
+            "Sereal::Encoder" : "0"
          },
          "requires" : {
             "Alien::SwaggerUI" : "0",
-            "Beam::Minion" : "0.007",
+            "Beam::Minion" : "0.017",
             "CPAN::Testers::Schema" : "0.023",
             "Cpanel::JSON::XS" : "0",
+            "Feature::Compat::Try" : "0",
             "File::Share" : "0",
+            "IO::Async::Loop::Mojo" : "0",
             "Import::Base" : "0.012",
             "JSON::MaybeXS" : "0",
             "JSON::Validator" : "1.07",
             "Log::Any" : "1.045",
             "Log::Any::Adapter::MojoLog" : "0.02",
             "Mercury" : "0.015",
-            "Minion::Backend::mysql" : "0.12",
+            "Minion::Backend::mysql" : "1",
             "Mojolicious" : "7.40",
             "Mojolicious::Plugin::Config" : "0",
             "Mojolicious::Plugin::OpenAPI" : "1.21",
             "Mojolicious::Plugin::Yancy" : "1.033",
+            "OpenTelemetry" : "0",
+            "OpenTelemetry::Constants" : "0",
+            "OpenTelemetry::Exporter::OTLP" : "0",
+            "OpenTelemetry::SDK" : "0",
+            "Syntax::Keyword::Dynamically" : "0",
             "perl" : "5.024"
          }
       },
@@ -81,27 +96,31 @@
    "provides" : {
       "CPAN::Testers::API" : {
          "file" : "lib/CPAN/Testers/API.pm",
-         "version" : "0.029"
+         "version" : "0.030"
       },
       "CPAN::Testers::API::Base" : {
          "file" : "lib/CPAN/Testers/API/Base.pm",
-         "version" : "0.029"
+         "version" : "0.030"
       },
       "CPAN::Testers::API::Controller::Release" : {
          "file" : "lib/CPAN/Testers/API/Controller/Release.pm",
-         "version" : "0.029"
+         "version" : "0.030"
       },
       "CPAN::Testers::API::Controller::Report" : {
          "file" : "lib/CPAN/Testers/API/Controller/Report.pm",
-         "version" : "0.029"
+         "version" : "0.030"
       },
       "CPAN::Testers::API::Controller::Summary" : {
          "file" : "lib/CPAN/Testers/API/Controller/Summary.pm",
-         "version" : "0.029"
+         "version" : "0.030"
       },
       "CPAN::Testers::API::Controller::Upload" : {
          "file" : "lib/CPAN/Testers/API/Controller/Upload.pm",
-         "version" : "0.029"
+         "version" : "0.030"
+      },
+      "CPAN::Testers::API::Metabase" : {
+         "file" : "lib/CPAN/Testers/API/Metabase.pm",
+         "version" : "0.030"
       }
    },
    "release_status" : "stable",
@@ -117,15 +136,15 @@
       },
       "x_IRC" : "irc://irc.perl.org/#cpantesters-discuss"
    },
-   "version" : "0.029",
+   "version" : "0.030",
    "x_authority" : "cpan:PREACTION",
    "x_contributors" : [
       "Breno G. de Oliveira <garu@cpan.org>",
       "mohawk2 <mohawk2@users.noreply.github.com>",
       "Nick Tonkin <1nickt@users.noreply.github.com>"
    ],
-   "x_generated_by_perl" : "v5.40.2",
-   "x_serialization_backend" : "Cpanel::JSON::XS version 4.39",
+   "x_generated_by_perl" : "v5.42.0",
+   "x_serialization_backend" : "Cpanel::JSON::XS version 4.40",
    "x_spdx_expression" : "Artistic-1.0-Perl OR GPL-1.0-or-later"
 }
 

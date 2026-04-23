@@ -145,7 +145,7 @@ sub release( $c ) {
 
     # Stream the resultset, and collect the data to store in the cache
     my @results;
-    $c->stream_rs( $rs, sub($row) { push @results, $row; $row } );
+    $c->stream_rs( scalar $rs->total_by_release, sub($row) { push @results, $row; $row } );
     $c->app->cache->set($cache_key, encode_json(\@results));
 }
 
